@@ -2,6 +2,13 @@
 
 All notable changes to this extension are documented here.
 
+## [1.1.1] - 2026-09-02
+
+### Fixed
+
+- Prevented incomplete legacy preferences from blanking cabinet defaults when the generator opens.
+- Added browser-side fallback values so every form field is populated even when saved data is missing.
+
 ## [1.1.0] - 2026-09-02
 
 ### Added

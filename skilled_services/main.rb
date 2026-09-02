@@ -1919,6 +1919,32 @@ when "hinge"
     rescue
       nil
     end
+
+    # Merge persisted values without allowing incomplete/legacy preference
+    # records to erase current defaults. Older builds sometimes saved nil or
+    # blank form values, which produced an apparently uninitialized dialog.
+    def merge_valid_saved_params(defaults, saved)
+      return defaults unless saved.is_a?(Hash)
+
+      saved.each_with_object(defaults.dup) do |(key, value), merged|
+        key = key.to_sym if key.respond_to?(:to_sym)
+        next unless merged.key?(key)
+
+        default_value = merged[key]
+        valid =
+          case default_value
+          when Numeric
+            !value.nil? && !value.to_s.strip.empty? && Float(value, exception: false)
+          when TrueClass, FalseClass
+            value == true || value == false
+          else
+            !value.nil?
+          end
+
+        merged[key] = value if valid
+      end
+    end
+
     def merged_params_for_type(type)
       defaults = defaults_for(type)
       merged = defaults.merge(merged_global_settings)
@@ -1944,9 +1970,7 @@ when "hinge"
         merged[:back_thk_in] = defaults[:back_thk_in]
       end
 
-      return merged unless saved.is_a?(Hash)
-
-      merged = merged.merge(saved)
+      merged = merge_valid_saved_params(merged, saved)
 
       # Defensive defaults: If a saved preset has blank/zero values (common after schema changes),
       # fall back to type defaults rather than leaving the UI or build params invalid.

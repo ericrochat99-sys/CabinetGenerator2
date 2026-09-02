@@ -1390,7 +1390,13 @@ function gather(){
             }
 
             window.set_form = (json) => {
-              const d = (typeof json === "string") ? JSON.parse(json) : (json || {});
+              const supplied = (typeof json === "string") ? JSON.parse(json) : (json || {});
+              // Keep the form complete when loading preferences written by an
+              // older version. Missing/null values must not blank built-in defaults.
+              const d = { ...EMBED_DEFAULTS_JSON };
+              Object.entries(supplied).forEach(([key, value]) => {
+                if (value !== null && value !== undefined) d[key] = value;
+              });
 
               // Any manual load/reset is assumed to exit edit mode unless Ruby explicitly re-enters it.
               clearEditMode();
