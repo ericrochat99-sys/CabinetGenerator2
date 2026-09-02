@@ -1,0 +1,14 @@
+body { font-family: Arial, sans-serif; margin: 14px; }
+h2 { margin: 0 0 10px 0; font-size: 16px; }
+details.section { margin-top: 14px; padding-top: 10px; border-top: 1px solid #ddd; }
+details.section > summary { cursor: pointer; font-weight: 700; list-style: none; }
+details.section > summary::-webkit-details-marker { display:none; }
+details.section > summary:before { content: "▸"; display:inline-block; width: 1.2em; }
+details.section[open] > summary:before { content: "▾"; }
+.row { margin: 10px 0; }
+label { display:block; font-size: 12px; margin-bottom: 4px; }
+input[type="number"], input[type="text"] { width: 100%; padding: 7px; border: 1px solid #bbb; border-radius: 6px; }
+input[type="checkbox"] { transform: scale(1.1); }
+.actions { display:flex; gap:10px; flex-wrap:wrap; margin-top: 16px; }
+button { padding: 9px 12px; border: 1px solid #888; background:#f4f4f4; border-radius: 8px; cursor: pointer; }
+button.primary { background:#2b6cb0; color:#fff; border-color:#2b6cb0; }

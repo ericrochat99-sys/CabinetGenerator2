@@ -1,0 +1,237 @@
+        <!doctype html>
+        <html>
+        <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>{{STYLES}}</style>
+        </head>
+        <body>
+          <h2>Euro Cabinet Generator (Imperial)</h2>
+
+          <div id="edit_banner" class="warn" style="display:none; margin-bottom: 10px;"></div>
+          <div class="actions">
+            <button class="primary" id="place_new">Place Cabinet</button>
+            <button class="primary" id="apply_edit" style="display:none;">Update Selected Cabinet</button>
+            <button class="secondary" id="edit_selected">Edit Selected</button>
+            <button class="secondary" id="cancel_edit" style="display:none;">Cancel Edit</button>
+            <button class="secondary" id="reset_type">Reset This Type</button>
+            <button class="secondary" id="reset_all">Reset All</button>
+          </div>
+          <div id="place_status" class="muted" style="margin-top:-6px; margin-bottom: 6px;"></div>
+          <div class="muted" style="margin-bottom: 10px;">Last generated model: <span id="last_model"></span></div>
+          <div class="section_title" style="margin-top: 10px; font-weight: 700;">Preview (Detailed)</div>
+          <div class="panel">
+
+              <canvas id="preview" width="600" height="340"></canvas>
+              <div id="warnings" class="muted"></div>
+              <div class="muted">
+                Preview shows door/drawer layout, false front, ADA knee clearance zone, and apron indication.
+                Toe kick is a separate base by default (except ADA Sink). Finished Ends use an integral toe notch. Leaf parts are Components for OpenCutList.
+              </div>
+            </div>
+
+
+          <details>
+            <summary>Cabinet</summary>
+            <div class="panel compact">
+              <div class="grid">
+                <div class="row">
+                  <label>Type</label>
+                  <select id="cabinet_type">
+                    <option>Base</option>
+	                    <option>Trash Can</option>
+	                    <option>Diagonal Corner Base</option>
+	                    <option>Pie-Cut Corner Base</option>
+	                    <option>Blind Corner Base</option>
+                    <option>Wall</option>
+                    <option>Tall</option>
+                    <option>Cubbies</option>
+                     <option>Appliance End Panel</option>
+                    <option>Sink Base</option>
+                    <option>ADA Sink</option>
+                  </select>
+                </div>
+                <div class="row">
+                  <label class="checkbox">
+                    <input id="auto_name" type="checkbox"> Use Auto Name
+                  </label>
+                </div>
+              </div>
+
+
+              <div class="row">
+                <label>Room #</label>
+                <input id="room" type="text" placeholder="e.g., 101" />
+              </div>
+              <div class="row">
+                <label>Name</label>
+                <input id="name" type="text" />
+              </div>
+
+              <div class="grid">
+                <div class="row"><label>Width (in) (max 48)</label><input id="width_in" type="number" step="0.001"></div>
+                <div class="row"><label>Depth (in)</label><input id="depth_in" type="number" step="0.001"></div>
+
+                <div class="row">
+                  <label>Height Preset</label>
+                  <select id="height_preset"></select>
+                </div>
+                <div class="row"><label>Finished Height to Countertop Top (in)</label><input id="height_in" type="number" step="0.001"></div>
+
+                <div class="row"><label>Shelves (count)</label><input id="shelf_count" type="number" step="1" min="0"></div>
+                <div class="row" id="cubby_target_row" style="display:none;"><label>Cubby Size Target (in.)</label><select id="cubby_target_in"><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option></select></div>
+                <div class="row"><label>Doors (auto split @ 24")</label><input id="door_count" type="text" disabled /></div>
+              </div>
+            </div>
+          </details>
+
+          <div id="construction_hidden" style="display:none">
+            <input id="panel_thk_in" type="number" step="0.001">
+            <input id="back_thk_in" type="number" step="0.001">
+<select id="top_mode">
+              <option>Stretchers</option>
+              <option>Full Top</option>
+            </select>
+            <input id="stretcher_width_in" type="number" step="0.001">
+          </div>
+
+          <details>
+            <summary>Toe Kick</summary>
+            <div class="panel compact">
+              <div class="grid">
+                <div class="row"><label>Toe Height (in)</label><input id="toe_height_in" type="number" step="0.001"></div>
+                <div class="row"><label>Toe Recess (in)</label><input id="toe_recess_in" type="number" step="0.001"></div>
+              </div>
+              <div style="margin-top:10px;">
+                <label style="font-size:12px; font-weight:700; display:block; margin-bottom:6px;">Finished Ends</label>
+                <div class="checkbox" style="margin-bottom:6px;">
+                  <input id="finish_left_end" type="checkbox">
+                  <label for="finish_left_end" style="margin:0;">Finished Left End</label>
+                </div>
+                <div class="checkbox">
+                  <input id="finish_right_end" type="checkbox">
+                  <label for="finish_right_end" style="margin:0;">Finished Right End</label>
+                </div>
+                <div class="muted" style="margin-top:6px;">
+                  When selected on base cabinets that use a toe kick, the side panel runs to the floor with an integral toe notch (4&quot; tall × 3&quot; recess by default) and the separate toe-base ladder is not generated.
+                </div>
+              </div>
+
+              <div class="muted">ADA Sink does not use toe kick.</div>
+            </div>
+          </details>
+
+          <details>
+            <summary>Drawers (Base)</summary>
+            <div class="panel compact">
+              <div class="grid">
+                <div class="row">
+                  <label>Drawer Count</label>
+                  <select id="drawer_count">
+                    <option value="0">0 (Doors Only)</option>
+                    <option value="1">1 (Top Drawer + Doors)</option>
+                    <option value="2">2 (Drawers Only)</option>
+                    <option value="3">3 (Drawers Only)</option>
+                    <option value="4">4 (Drawers Only)</option>
+                    <option value="5">5 (Drawers Only)</option>
+                  </select>
+                </div>
+                <div class="row">
+                  <label class="checkbox">
+                    <input id="use_slides" type="checkbox"> Add Side-Mount Slides
+                  </label>
+                </div>
+                <div class="row span2" id="drawer_front_height_row">
+                  <label class="no_wrap">Top drawer front height (in) <span style="color:#666; font-weight: normal;">(only when Drawer Count = 1)</span></label>
+                  <input id="drawer_front_height_in" type="number" step="0.001">
+                </div>
+                <div class="row span2" id="drawer_front_panels_row">
+                  <label class="no_wrap">Drawer front heights (top to bottom, in) <span style="color:#666; font-weight: normal;">(Drawer Count ≥ 2)</span></label>
+
+                  <!-- Hidden CSV field kept for backward compatibility with Ruby parsing -->
+                  <input id="drawer_front_heights_in" type="text" style="display:none" />
+
+                  <div id="drawer_front_panels" class="panel_fields"></div>
+                  <div class="muted" style="margin-top:6px;">
+                    Enter heights for the top drawers; the bottom drawer is auto-calculated to fill the opening.
+                  </div>
+                </div>
+                <div class="row">
+                  <label>Gap between drawer fronts (in)</label>
+                  <input id="drawer_gap_in" type="number" step="0.001">
+                </div>
+              </div>
+              <div class="muted">Drawers are only generated for Base. If drawer count is 2+, doors are auto-disabled.</div>
+            </div>
+          </details>
+
+          <details>
+            <summary>Doors + Overlay</summary>
+            <div class="panel compact">
+              <div class="grid">
+                <div class="row">
+                  <label class="checkbox">
+                    <input id="show_doors" type="checkbox"> Show Doors
+                  </label>
+                </div>
+                <div class="row"><label>Door Thickness (in)</label><input id="door_thk_in" type="number" step="0.001"></div>
+
+                <div class="row">
+                  <label>Hinge Side (single)</label>
+                  <select id="hinge_side">
+                    <option>Auto</option>
+                    <option>Left</option>
+                    <option>Right</option>
+                  </select>
+                </div>
+                <div class="row">
+                  <label>Door Swing</label>
+                  <select id="door_swing">
+                    <option>Closed</option>
+                    <option>Open</option>
+                  </select>
+                </div>
+
+                <div class="row"><label>Open Angle (deg)</label><input id="open_angle_deg" type="number" step="1"></div>
+
+                <div class="row">
+                  <label>Overlay Mode</label>
+                  <select id="overlay_mode">
+                    <option>Reveals</option>
+                    <option>True Full Overlay</option>
+                  </select>
+                </div>
+                <div class="row"><label>Reveal Edge (in)</label><input id="reveal_edge_in" type="number" step="0.001"></div>
+                <div class="row"><label>Reveal Center (in)</label><input id="reveal_center_in" type="number" step="0.001"></div>
+
+                <div class="row"><label>Partitions (doors-only)</label><input id="partition_count" type="number" step="1" min="0"></div>
+              </div>
+              <div class="muted">If doors won't fit with current settings, placement still works and doors may be skipped automatically.</div>
+            </div>
+          </details>
+
+          <details id="sink_ada_section">
+            <summary>Sink / ADA Options</summary>
+            <div class="panel compact">
+              <div class="grid">
+                <div class="row"><label>False Drawer Front Height (in)</label><input id="false_front_height_in" type="number" step="0.001"></div>
+                <div class="row"><label>Countertop Thickness (in)</label><input id="countertop_thk_in" type="number" step="0.001"></div>
+                <div class="row"><label>ADA Knee Clearance Height (in)</label><input id="ada_knee_clear_h_in" type="number" step="0.001"></div>
+                <div class="row"><label>ADA Apron Height (in)</label><input id="ada_apron_h_in" type="number" step="0.001"></div>
+                <div class="row"><label>ADA Knee Depth (in) (17–25)</label><input id="ada_knee_depth_in" type="number" step="0.001"></div>
+                <div class="row"><label>ADA Side Leg Depth (in)</label><input id="ada_side_leg_depth_in" type="number" step="0.001"></div>
+              </div>
+              <div class="muted">ADA construction uses upper side panels + front/rear legs, open knee space, and sloped apron. Finished height remains the countertop top.</div>
+            </div>
+          </details>
+
+          <div id="materials_hidden" style="display:none">
+            <input id="tag_carcass" type="text">
+            <input id="tag_toe" type="text">
+            <input id="tag_hardware" type="text">
+            <input id="mat_hardware" type="text">
+            <input id="mat_countertop" type="text">
+          </div>
+  <script>{{SCRIPT}}</script>
+        </body>
+        </html>

@@ -1,0 +1,40 @@
+body { font-family: Arial, sans-serif; margin: 14px; }
+h2 { margin: 0 0 8px 0; font-size: 16px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+/* Utility layout helpers */
+.span2 { grid-column: 1 / -1; }
+.no_wrap { white-space: normal; }
+.row { display: grid; grid-template-columns: 1fr; gap: 6px; margin-bottom: 10px; }
+label { font-size: 12px; color: #333; }
+input, select { width: 100%; padding: 7px; border: 1px solid #bbb; border-radius: 6px; }
+input[disabled], select[disabled] { background: #f6f7f9; color: #444; }
+
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; margin-bottom: 12px; }
+button { padding: 10px 12px; border: 0; border-radius: 8px; cursor: pointer; }
+button.primary { background: #1f6feb; color: white; }
+button.secondary { background: #eaeef2; }
+button:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.muted { font-size: 11px; color: #666; line-height: 1.35; margin-top: 6px; }
+.checkbox { display: flex; align-items: center; gap: 8px; }
+.checkbox input { width: auto; }
+.warn { padding: 8px 10px; background: #fff5f5; border: 1px solid #ffd2d2; border-radius: 10px; color: #7a1b1b; font-size: 12px; }
+canvas { width: 100%; height: auto; border: 1px solid #ddd; border-radius: 10px; }
+
+details { border: 1px solid #ddd; border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
+summary { list-style: none; cursor: pointer; padding: 10px 12px; user-select: none; font-weight: bold; font-size: 13px; background: #fafafa; display: flex; align-items: center; justify-content: space-between; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "▸"; font-size: 14px; color: #444; }
+details[open] summary::after { content: "▾"; }
+.panel { padding: 10px; }
+.panel.compact { padding-top: 8px; }
+
+/* Drawer front panel inputs */
+.panel_fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.panel_fields .pf { display:flex; flex-direction:column; gap:4px; }
+.panel_fields .pf label { font-size: 11px; color:#555; }
+.panel_fields .pf input[type="number"] { width: 100%; }
+.panel_fields .pf input[disabled] { background: #f5f5f5; color:#666; }
+@media (max-width: 720px){
+  .panel_fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

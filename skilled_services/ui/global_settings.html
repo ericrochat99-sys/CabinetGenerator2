@@ -1,0 +1,88 @@
+        <!doctype html>
+        <html>
+        <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>{{STYLES}}</style>
+        </head>
+        <body>
+          <h2>Global Settings</h2>
+
+          <details class="section">
+            <summary>Construction</summary>
+            <div class="row"><label>Panel thk (in)</label><input id="panel_thk_in" type="number" step="0.001"/></div>
+            <div class="row"><label>Back thk (in)</label><input id="back_thk_in" type="number" step="0.001"/></div>
+            <div class="row"><label>Door thk (in)</label><input id="door_thk_in" type="number" step="0.001"/></div>
+            <div class="row"><label>Drawer front thk (in)</label><input id="drawer_front_thk_in" type="number" step="0.001"/></div>
+            <div class="row"><label>Drawer box thk (in)</label><input id="box_thk_in" type="number" step="0.001"/></div>
+            <div class="row">
+              <label>Base top construction</label>
+              <select id="base_top_mode">
+                <option value="Stretchers">Stretchers</option>
+                <option value="Full Top">Full panel</option>
+              </select>
+            </div>
+            <div class="row">
+              <label>Tall top construction</label>
+              <select id="tall_top_mode">
+                <option value="Full Top">Full panel</option>
+                <option value="Stretchers">Stretchers</option>
+              </select>
+            </div>
+            <div class="row">
+              <label>Back construction</label>
+              <select id="back_mode">
+                <option value="Full Back">Full back panel</option>
+                <option value="Back Stretcher + 1/4 Back">Back stretcher + 1/4&quot; back</option>
+              </select>
+            </div>
+          </details>
+
+          <details class="section">
+            <summary>Materials</summary>
+            <div class="row"><label>Interior melamine</label><input id="carcass_color_hex" type="color"/></div>
+            <div class="row"><label>Exterior finish</label><input id="front_color_hex" type="color"/></div>
+            <div class="row"><label>Edgeband</label><input id="edgeband_color_hex" type="color"/></div>
+          </details>
+
+          <details class="section">
+            <summary>Fronts</summary>
+
+<div class="row"><label>Reveal (in)</label><input id="reveal_in" type="number" step="0.001"/></div>
+          </details>
+
+          <details class="section">
+            <summary>Toe Kick</summary>
+            <div class="row"><label>Toe kick h (in)</label><input id="toe_kick_h_in" type="number" step="0.001"/></div>
+            <div class="row"><label>Toe kick recess (in)</label><input id="toe_kick_recess_in" type="number" step="0.001"/></div>
+          </details>
+
+          <details class="section">
+            <summary>Hardware</summary>
+            
+            <div class="row">
+              <label for="pull_kind">Pull style</label>
+              <select id="pull_kind">
+                <option value="wire_pull">Wire pull</option>
+                <option value="knob">Knob</option>
+                <option value="bar_pull">Bar pull</option>
+                <option value="none">None</option>
+              </select>
+            </div>
+            <div class="row" style="display:none"><label><input id="add_wire_pulls" type="checkbox"/> Wire pulls</label></div>
+            <div class="row"><label><input id="drawer_pull_centered" type="checkbox"/> Center drawer pulls vertically</label></div>
+            <div class="row"><label><input id="add_hinges" type="checkbox"/> Hinges</label></div>
+            <div class="row"><label><input id="add_door_bumpers" type="checkbox"/> Door bumpers</label></div>
+            <div class="row"><label><input id="add_shelf_supports" type="checkbox"/> Shelf supports</label></div>
+            <div class="row"><label><input id="add_cam_lock" type="checkbox"/> Cam lock</label></div>
+            <div class="row"><label><input id="add_countertop_brackets" type="checkbox"/> A&M 21x21 brackets</label></div>
+          </details>
+
+          <div class="actions">
+            <button class="primary" id="save">Save</button>
+            <button id="reset">Reset</button>
+            <button id="close">Close</button>
+          </div>
+  <script>{{SCRIPT}}</script>
+        </body>
+        </html>
