@@ -2,6 +2,18 @@
 
 All notable changes to this extension are documented here.
 
+## [1.1.0] - 2026-09-02
+
+### Added
+
+- Automatic daily update checks against the latest public GitHub Release.
+- Manual **Check for Updates…** command in the extension menu.
+- Trusted release-page prompt when a newer semantic version is available.
+
+### Changed
+
+- Updated the extension version to `1.1.0`.
+
 ## [1.0.0] - 2026-09-02
 
 ### Added

@@ -10,7 +10,7 @@ A SketchUp extension for creating configurable European-style cabinets, adding c
 
 ## Installation
 
-1. Download `skilled-services-1.0.0.rbz` from the release.
+1. Download the latest `skilled-services-<version>.rbz` from the [Releases page](https://github.com/ericrochat99-sys/CabinetGenerator2/releases/latest).
 2. In SketchUp, open **Extensions → Extension Manager**.
 3. Choose **Install Extension**.
 4. Select the downloaded `.rbz` file and approve the installation.
@@ -20,6 +20,7 @@ A SketchUp extension for creating configurable European-style cabinets, adding c
 
 - `skilled_services.rb` registers the extension with SketchUp.
 - `skilled_services/main.rb` contains cabinet/model operations and dialog callbacks.
+- `skilled_services/services/update_checker.rb` checks the official GitHub Releases API for newer versions.
 - `skilled_services/ui/` contains reusable dialog templates and separate HTML, CSS, and JavaScript assets (`index.html`, `styles.css`, and `app.js`).
 - `skilled_services/version.rb` is the authoritative version source.
 - `scripts/build_rbz.rb` builds a deterministic installable package.
@@ -34,7 +35,7 @@ Validate Ruby syntax and build from the repository root:
 ruby -c skilled_services.rb
 find skilled_services -name "*.rb" -print0 | xargs -0 -n1 ruby -c
 ruby scripts/build_rbz.rb
-unzip -t dist/skilled-services-1.0.0.rbz
+unzip -t dist/skilled-services-1.1.0.rbz
 ```
 
 The builder stages only runtime files, validates required paths, rejects development or secret-like filenames, and writes `dist/skilled-services-<version>.rbz` without a parent directory.
@@ -43,4 +44,6 @@ The builder stages only runtime files, validates required paths, rejects develop
 
 Update `SkilledServices::VERSION` using semantic versioning and add the release to `CHANGELOG.md`. Merge the exact release source into `main`, then create a matching tag such as `v1.0.0`. GitHub Actions validates and packages pushes to `main`; a matching version tag also publishes the RBZ to the GitHub Release.
 
-Installing a newer RBZ is currently a manual process. SketchUp does not automatically update this extension from GitHub.
+## Update checks
+
+The extension checks the latest public GitHub Release once per day after SketchUp starts. You can also run **Extensions → Euro Cabinet Generator → Check for Updates…** at any time. When a newer semantic version is available, the extension offers to open the trusted GitHub release page. Installation remains user-controlled through SketchUp Extension Manager; the updater never downloads or executes remote Ruby code.

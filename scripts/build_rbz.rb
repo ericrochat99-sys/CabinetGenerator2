@@ -14,6 +14,7 @@ REQUIRED_PATHS = [
   "skilled_services.rb",
   "skilled_services/main.rb",
   "skilled_services/version.rb",
+  "skilled_services/services/update_checker.rb",
   "skilled_services/ui/dialog.rb",
   "skilled_services/ui/index.html",
   "skilled_services/ui/styles.css",

@@ -5,6 +5,7 @@ require "digest"
 require "sketchup.rb"
 require_relative "version"
 require_relative "ui/dialog"
+require_relative "services/update_checker"
 
 
 
@@ -5203,6 +5204,8 @@ module_function :_create_right_section_scenes_by_type
         sub.add_separator
         sub.add_item("Global Settings…") { show_global_settings_dialog }
         sub.add_item("Add Countertops to Selection…") { add_countertops_to_selection }
+        sub.add_separator
+        sub.add_item("Check for Updates…") { SkilledServices::UpdateChecker.check(manual: true) }
       rescue
         # Fallback for unusual menu environments
         ext_menu.add_item(PLUGIN_NAME) { show_dialog(edit_selected: false) }
@@ -5215,6 +5218,7 @@ module_function :_create_right_section_scenes_by_type
       if SkilledServices::EuroCabinetGenerator.respond_to?(:install_menu)
         SkilledServices::EuroCabinetGenerator.install_menu
       end
+      SkilledServices::UpdateChecker.schedule_auto_check
       file_loaded(__FILE__)
     end
   end
