@@ -1,0 +1,61 @@
+name: Build RBZ
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+
+      - name: Validate Ruby syntax
+        run: |
+          ruby -c skilled_services.rb
+          find skilled_services scripts -name "*.rb" -print0 | xargs -0 -n1 ruby -c
+
+      - name: Build RBZ
+        run: ruby scripts/build_rbz.rb
+
+      - name: Verify RBZ archive
+        run: |
+          archive="$(find dist -maxdepth 1 -name '*.rbz' -type f -print -quit)"
+          test -n "$archive"
+          unzip -t "$archive"
+          unzip -Z1 "$archive" | grep -Fx skilled_services.rb
+          unzip -Z1 "$archive" | grep -Fx skilled_services/main.rb
+          unzip -Z1 "$archive" | grep -Fx skilled_services/version.rb
+          if unzip -Z1 "$archive" | grep -Eq '(^|/)(\.git|\.github|node_modules|tests|tmp)(/|$)'; then
+            echo "Development-only content found in RBZ" >&2
+            exit 1
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: skilled-services-rbz
+          path: dist/*.rbz
+
+      - name: Confirm release tag matches VERSION
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          expected="v$(ruby -I. -r./skilled_services/version -e 'print SkilledServices::VERSION')"
+          test "${GITHUB_REF_NAME}" = "$expected"
+
+      - name: Attach RBZ to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.rbz
+          generate_release_notes: true
