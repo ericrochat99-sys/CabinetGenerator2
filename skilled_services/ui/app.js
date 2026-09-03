@@ -79,7 +79,9 @@
                 const option = document.createElement("option"); option.value = value; option.textContent = value; category.appendChild(option);
               });
               const selected = CATALOG.find(item => item.code === lastCode) || CATALOG[0];
-              if (selected) { category.value = selected.category; renderCatalog(selected.code); chooseCatalogModel(selected.code, true); }
+              // Populate the picker without replacing the ready-to-place type
+              // defaults. A catalog model is applied only after the user selects it.
+              if (selected) { category.value = selected.category; renderCatalog(selected.code); chooseCatalogModel(selected.code, false); }
             }
 
             window.initialize_catalog = initialize_catalog;
@@ -1442,6 +1444,7 @@ function gather(){
 
               $("cabinet_type").addEventListener("change", () => {
                 const t = $("cabinet_type").value;
+                if (window.applyImmediateTypeDefaults) window.applyImmediateTypeDefaults(t);
                 applyTopModeRulesForType(t);
                 populateHeightPresets(t);
                 setPresetFromHeight(t);

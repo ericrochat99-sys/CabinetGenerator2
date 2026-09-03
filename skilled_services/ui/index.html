@@ -69,7 +69,7 @@
                 </div>
                 <div class="row">
                   <label class="checkbox">
-                    <input id="auto_name" type="checkbox"> Use Auto Name
+                    <input id="auto_name" type="checkbox" checked> Use Auto Name
                   </label>
                 </div>
               </div>
@@ -85,7 +85,7 @@
               </div>
 
               <div class="grid">
-                <div class="row"><label>Width (in) (max 48)</label><input id="width_in" type="number" step="0.001" value="24"></div>
+                <div class="row"><label>Width (in) (max 48)</label><input id="width_in" type="number" step="0.001" value="30"></div>
                 <div class="row"><label>Depth (in)</label><input id="depth_in" type="number" step="0.001" value="24"></div>
 
                 <div class="row">
@@ -102,41 +102,41 @@
           </details>
 
           <div id="construction_hidden" style="display:none">
-            <input id="panel_thk_in" type="number" step="0.001">
-            <input id="back_thk_in" type="number" step="0.001">
-            <input id="shelf_thk_in" type="number" step="0.001">
-            <input id="drawer_front_thk_in" type="number" step="0.001">
-            <input id="box_thk_in" type="number" step="0.001">
-            <input id="construction_type" type="text">
-            <input id="cabinet_construction" type="text">
-            <input id="door_style" type="text">
-            <input id="drawer_box_style" type="text">
-            <input id="hardware" type="text">
+            <input id="panel_thk_in" type="number" step="0.001" value="0.75">
+            <input id="back_thk_in" type="number" step="0.001" value="0.75">
+            <input id="shelf_thk_in" type="number" step="0.001" value="0.75">
+            <input id="drawer_front_thk_in" type="number" step="0.001" value="0.75">
+            <input id="box_thk_in" type="number" step="0.001" value="0.75">
+            <input id="construction_type" type="text" value="Frameless">
+            <input id="cabinet_construction" type="text" value="Frameless">
+            <input id="door_style" type="text" value="Slab">
+            <input id="drawer_box_style" type="text" value="Melamine">
+            <input id="hardware" type="text" value="Soft-close hinges; full-extension slides">
             <input id="mat_parts" type="text">
 <select id="top_mode">
               <option>Stretchers</option>
               <option>Full Top</option>
             </select>
-            <input id="stretcher_width_in" type="number" step="0.001">
-            <input id="automatic_double_door_threshold_in" type="number" step="0.001">
-            <input id="automatic_drawer_bank_split_threshold_in" type="number" step="0.001">
-            <input id="trash_drawer_box_bottom_offset_in" type="number" step="0.001">
-            <input id="aep_front_return_width_in" type="number" step="0.001">
-            <input id="aep_front_return_thk_in" type="number" step="0.001">
-            <input id="add_wire_pulls" type="checkbox">
-            <input id="add_hinges" type="checkbox">
-            <input id="add_door_bumpers" type="checkbox">
-            <input id="add_shelf_supports" type="checkbox">
-            <input id="add_cam_lock" type="checkbox">
-            <input id="add_countertop_brackets" type="checkbox">
+            <input id="stretcher_width_in" type="number" step="0.001" value="5">
+            <input id="automatic_double_door_threshold_in" type="number" step="0.001" value="24">
+            <input id="automatic_drawer_bank_split_threshold_in" type="number" step="0.001" value="37">
+            <input id="trash_drawer_box_bottom_offset_in" type="number" step="0.001" value="0.5">
+            <input id="aep_front_return_width_in" type="number" step="0.001" value="1.5">
+            <input id="aep_front_return_thk_in" type="number" step="0.001" value="0.75">
+            <input id="add_wire_pulls" type="checkbox" checked>
+            <input id="add_hinges" type="checkbox" checked>
+            <input id="add_door_bumpers" type="checkbox" checked>
+            <input id="add_shelf_supports" type="checkbox" checked>
+            <input id="add_cam_lock" type="checkbox" checked>
+            <input id="add_countertop_brackets" type="checkbox" checked>
           </div>
 
           <details>
             <summary>Toe Kick</summary>
             <div class="panel compact">
               <div class="grid">
-                <div class="row"><label>Toe Height (in)</label><input id="toe_height_in" type="number" step="0.001"></div>
-                <div class="row"><label>Toe Recess (in)</label><input id="toe_recess_in" type="number" step="0.001"></div>
+                <div class="row"><label>Toe Height (in)</label><input id="toe_height_in" type="number" step="0.001" value="4"></div>
+                <div class="row"><label>Toe Recess (in)</label><input id="toe_recess_in" type="number" step="0.001" value="3"></div>
               </div>
               <div style="margin-top:10px;">
                 <label style="font-size:12px; font-weight:700; display:block; margin-bottom:6px;">Finished Ends</label>
@@ -165,7 +165,7 @@
                   <label>Drawer Count</label>
                   <select id="drawer_count">
                     <option value="0">0 (Doors Only)</option>
-                    <option value="1">1 (Top Drawer + Doors)</option>
+                    <option value="1" selected>1 (Top Drawer + Doors)</option>
                     <option value="2">2 (Drawers Only)</option>
                     <option value="3">3 (Drawers Only)</option>
                     <option value="4">4 (Drawers Only)</option>
@@ -174,12 +174,12 @@
                 </div>
                 <div class="row">
                   <label class="checkbox">
-                    <input id="use_slides" type="checkbox"> Add Side-Mount Slides
+                    <input id="use_slides" type="checkbox" checked> Add Side-Mount Slides
                   </label>
                 </div>
                 <div class="row span2" id="drawer_front_height_row">
                   <label class="no_wrap">Top drawer front height (in) <span style="color:#666; font-weight: normal;">(only when Drawer Count = 1)</span></label>
-                  <input id="drawer_front_height_in" type="number" step="0.001">
+                  <input id="drawer_front_height_in" type="number" step="0.001" value="6">
                 </div>
                 <div class="row span2" id="drawer_front_panels_row">
                   <label class="no_wrap">Drawer front heights (top to bottom, in) <span style="color:#666; font-weight: normal;">(Drawer Count ≥ 2)</span></label>
@@ -194,7 +194,7 @@
                 </div>
                 <div class="row">
                   <label>Gap between drawer fronts (in)</label>
-                  <input id="drawer_gap_in" type="number" step="0.001">
+                  <input id="drawer_gap_in" type="number" step="0.001" value="0.125">
                 </div>
               </div>
               <div class="muted">Drawers are only generated for Base. If drawer count is 2+, doors are auto-disabled.</div>
@@ -207,10 +207,10 @@
               <div class="grid">
                 <div class="row">
                   <label class="checkbox">
-                    <input id="show_doors" type="checkbox"> Show Doors
+                    <input id="show_doors" type="checkbox" checked> Show Doors
                   </label>
                 </div>
-                <div class="row"><label>Door Thickness (in)</label><input id="door_thk_in" type="number" step="0.001"></div>
+                <div class="row"><label>Door Thickness (in)</label><input id="door_thk_in" type="number" step="0.001" value="0.75"></div>
 
                 <div class="row">
                   <label>Hinge Side (single)</label>
@@ -228,7 +228,7 @@
                   </select>
                 </div>
 
-                <div class="row"><label>Open Angle (deg)</label><input id="open_angle_deg" type="number" step="1"></div>
+                <div class="row"><label>Open Angle (deg)</label><input id="open_angle_deg" type="number" step="1" value="95"></div>
 
                 <div class="row">
                   <label>Overlay Mode</label>
@@ -237,10 +237,10 @@
                     <option>True Full Overlay</option>
                   </select>
                 </div>
-                <div class="row"><label>Reveal Edge (in)</label><input id="reveal_edge_in" type="number" step="0.001"></div>
-                <div class="row"><label>Reveal Center (in)</label><input id="reveal_center_in" type="number" step="0.001"></div>
+                <div class="row"><label>Reveal Edge (in)</label><input id="reveal_edge_in" type="number" step="0.001" value="0.0625"></div>
+                <div class="row"><label>Reveal Center (in)</label><input id="reveal_center_in" type="number" step="0.001" value="0.125"></div>
 
-                <div class="row"><label>Partitions (doors-only)</label><input id="partition_count" type="number" step="1" min="0"></div>
+                <div class="row"><label>Partitions (doors-only)</label><input id="partition_count" type="number" step="1" min="0" value="0"></div>
               </div>
               <div class="muted">If doors won't fit with current settings, placement still works and doors may be skipped automatically.</div>
             </div>
@@ -250,12 +250,12 @@
             <summary>Sink / ADA Options</summary>
             <div class="panel compact">
               <div class="grid">
-                <div class="row"><label>False Drawer Front Height (in)</label><input id="false_front_height_in" type="number" step="0.001"></div>
-                <div class="row"><label>Countertop Thickness (in)</label><input id="countertop_thk_in" type="number" step="0.001"></div>
-                <div class="row"><label>ADA Knee Clearance Height (in)</label><input id="ada_knee_clear_h_in" type="number" step="0.001"></div>
-                <div class="row"><label>ADA Apron Height (in)</label><input id="ada_apron_h_in" type="number" step="0.001"></div>
-                <div class="row"><label>ADA Knee Depth (in) (17–25)</label><input id="ada_knee_depth_in" type="number" step="0.001"></div>
-                <div class="row"><label>ADA Side Leg Depth (in)</label><input id="ada_side_leg_depth_in" type="number" step="0.001"></div>
+                <div class="row"><label>False Drawer Front Height (in)</label><input id="false_front_height_in" type="number" step="0.001" value="6"></div>
+                <div class="row"><label>Countertop Thickness (in)</label><input id="countertop_thk_in" type="number" step="0.001" value="1.5"></div>
+                <div class="row"><label>ADA Knee Clearance Height (in)</label><input id="ada_knee_clear_h_in" type="number" step="0.001" value="27"></div>
+                <div class="row"><label>ADA Apron Height (in)</label><input id="ada_apron_h_in" type="number" step="0.001" value="3"></div>
+                <div class="row"><label>ADA Knee Depth (in) (17–25)</label><input id="ada_knee_depth_in" type="number" step="0.001" value="20"></div>
+                <div class="row"><label>ADA Side Leg Depth (in)</label><input id="ada_side_leg_depth_in" type="number" step="0.001" value="6"></div>
               </div>
               <div class="muted">ADA construction uses upper side panels + front/rear legs, open knee space, and sloped apron. Finished height remains the countertop top.</div>
             </div>
@@ -268,6 +268,55 @@
             <input id="mat_hardware" type="text">
             <input id="mat_countertop" type="text">
           </div>
+  <script>
+    // Synchronous safety net: the dialog is place-ready even if the SketchUp
+    // callback bridge is delayed or a later preview feature fails to initialize.
+    (function () {
+      const COMMON = {
+        panel_thk_in: 0.75, back_thk_in: 0.75, shelf_thk_in: 0.75,
+        drawer_front_thk_in: 0.75, box_thk_in: 0.75,
+        top_mode: "Stretchers", stretcher_width_in: 5,
+        toe_height_in: 4, toe_recess_in: 3,
+        shelf_count: 1, partition_count: 0, drawer_count: 1,
+        use_slides: true, drawer_front_height_in: 6, drawer_gap_in: 0.125,
+        show_doors: true, door_thk_in: 0.75, hinge_side: "Auto",
+        door_swing: "Closed", open_angle_deg: 95, overlay_mode: "Reveals",
+        reveal_edge_in: 0.0625, reveal_center_in: 0.125,
+        false_front_height_in: 6, countertop_thk_in: 1.5,
+        ada_knee_clear_h_in: 27, ada_apron_h_in: 3,
+        ada_knee_depth_in: 20, ada_side_leg_depth_in: 6
+      };
+      const TYPES = {
+        "Base": { width_in: 30, depth_in: 24, height_in: 34.5 },
+        "Wall": { width_in: 30, depth_in: 12, height_in: 30, top_mode: "Full Top", toe_height_in: 0, toe_recess_in: 0, drawer_count: 0, use_slides: false },
+        "Tall": { width_in: 30, depth_in: 24, height_in: 84, top_mode: "Full Top", partition_count: 1, drawer_count: 0, use_slides: false },
+        "Sink Base": { width_in: 30, depth_in: 24, height_in: 34.5, drawer_count: 0, use_slides: false },
+        "ADA Sink": { width_in: 30, depth_in: 21, height_in: 34.5, back_thk_in: 0.5, top_mode: "Full Top", toe_height_in: 0, toe_recess_in: 0, shelf_count: 0, drawer_count: 0, use_slides: false },
+        "Trash Can": { width_in: 15, depth_in: 24, height_in: 34.5, shelf_count: 0, drawer_count: 1, use_slides: true },
+        "Cubbies": { width_in: 30, depth_in: 24, height_in: 48, top_mode: "Full Top", shelf_count: 3, partition_count: 1, drawer_count: 0, use_slides: false, show_doors: false },
+        "Pie-Cut Corner Base": { width_in: 36, depth_in: 36, height_in: 34.5, top_mode: "Full Top", drawer_count: 0, use_slides: false },
+        "Diagonal Corner Base": { width_in: 36, depth_in: 36, height_in: 34.5, top_mode: "Full Top", drawer_count: 0, use_slides: false },
+        "Blind Corner Base": { width_in: 42, depth_in: 24, height_in: 34.5, top_mode: "Full Top", drawer_count: 0, use_slides: false },
+        "Appliance End Panel": { width_in: 30, depth_in: 24, height_in: 34.5, top_mode: "Full Top", toe_height_in: 0, toe_recess_in: 0, shelf_count: 0, partition_count: 0, drawer_count: 0, use_slides: false, show_doors: false }
+      };
+      function setField(id, value) {
+        const el = document.getElementById(id);
+        if (!el || value === undefined) return;
+        if (el.type === "checkbox") el.checked = !!value;
+        else el.value = String(value);
+      }
+      window.applyImmediateTypeDefaults = function (type) {
+        const values = Object.assign({}, COMMON, TYPES[type] || TYPES.Base);
+        Object.keys(values).forEach(function (id) { setField(id, values[id]); });
+        setField("cabinet_type", type || "Base");
+        setField("door_count", values.show_doors ? (values.width_in >= 24 ? 2 : 1) : 0);
+      };
+      window.applyImmediateTypeDefaults("Base");
+      document.getElementById("cabinet_type").addEventListener("change", function (event) {
+        window.applyImmediateTypeDefaults(event.target.value);
+      });
+    }());
+  </script>
   <script>{{SCRIPT}}</script>
         </body>
         </html>

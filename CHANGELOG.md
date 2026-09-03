@@ -2,6 +2,14 @@
 
 All notable changes to this extension are documented here.
 
+## [2.0.3] - 2026-09-03
+
+### Fixed
+
+- Made the cabinet dialog immediately place-ready with complete literal Base defaults in every visible field.
+- Added a synchronous per-type preset layer so every field changes immediately when a cabinet type is selected, even before the SketchUp callback returns.
+- Retained Ruby-backed project and catalog loading while preventing a delayed or failed secondary UI feature from leaving measurements blank.
+
 ## [2.0.2] - 2026-09-03
 
 ### Changed
