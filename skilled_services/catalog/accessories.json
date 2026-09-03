@@ -1,0 +1,4 @@
+[
+  {"code":"TC15","name":"Trash Pull-Out 15","category":"Accessories","cabinet_type":"Trash Can","default_width":15,"default_height":34.5,"default_depth":24,"minimum_width":15,"maximum_width":24,"width_increment":3,"door_count":0,"drawer_count":1,"shelf_count":0,"toe_kick":4.5,"construction_type":"Project Default","notes":"Full-height pull-out front"},
+  {"code":"CUB24","name":"Cubbies 24","category":"Accessories","cabinet_type":"Cubbies","default_width":24,"default_height":48,"default_depth":24,"minimum_width":12,"maximum_width":48,"width_increment":3,"door_count":0,"drawer_count":0,"shelf_count":3,"toe_kick":4.5,"construction_type":"Project Default","notes":"Open cubby storage"}
+]

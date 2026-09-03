@@ -2,6 +2,26 @@
 
 All notable changes to this extension are documented here.
 
+## [2.0.0] - 2026-09-03
+
+### Added
+
+- JSON catalogs for base, wall, tall, pantry, sink, vanity, corner, and accessory cabinets.
+- Automatic model defaults, project defaults, catalog search, favorites, recent models, and remembered selection.
+- Stable cabinet IDs, revision metadata, seven CSV report types, full shop-drawing views, and a double-click edit tool.
+- Countertop layout selection, backsplash generation, sink cutouts, and a reusable geometry part builder.
+
+### Changed
+
+- Project defaults flow into new cabinets while catalog and cabinet-level values remain editable.
+- Existing cabinet edits regenerate in place, retain identity, and increment revision.
+- Catalog codes are authoritative for new cabinets; legacy number inference remains for existing models.
+
+### Fixed
+
+- Restored B24 (24 x 34.5 x 24), W3018 (18 x 30 x 12), and Tall Pantry (24 x 84 x 24) defaults.
+- Prevented saved dimensions from replacing the selected catalog model's standard dimensions.
+
 ## [1.1.2] - 2026-09-03
 
 ### Fixed

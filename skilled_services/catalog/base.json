@@ -1,0 +1,6 @@
+[
+  {"code":"B12","name":"Base 12","category":"Base","cabinet_type":"Base","default_width":12,"default_height":34.5,"default_depth":24,"minimum_width":9,"maximum_width":21,"width_increment":3,"door_count":1,"drawer_count":1,"shelf_count":1,"toe_kick":4.5,"construction_type":"Project Default","notes":"Single-door base"},
+  {"code":"B24","name":"Base 24","category":"Base","cabinet_type":"Base","default_width":24,"default_height":34.5,"default_depth":24,"minimum_width":24,"maximum_width":36,"width_increment":3,"door_count":2,"drawer_count":1,"shelf_count":1,"toe_kick":4.5,"construction_type":"Project Default","notes":"Standard base cabinet"},
+  {"code":"B36","name":"Base 36","category":"Base","cabinet_type":"Base","default_width":36,"default_height":34.5,"default_depth":24,"minimum_width":36,"maximum_width":48,"width_increment":3,"door_count":2,"drawer_count":1,"shelf_count":1,"toe_kick":4.5,"construction_type":"Project Default","notes":"Wide base cabinet"},
+  {"code":"DB24","name":"Drawer Base 24","category":"Base","cabinet_type":"Base","default_width":24,"default_height":34.5,"default_depth":24,"minimum_width":12,"maximum_width":36,"width_increment":3,"door_count":0,"drawer_count":3,"shelf_count":0,"toe_kick":4.5,"construction_type":"Project Default","notes":"Three-drawer base"}
+]

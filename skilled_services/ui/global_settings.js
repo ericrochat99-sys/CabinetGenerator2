@@ -1,5 +1,7 @@
-const DEFAULTS = {{DEFAULTS_JSON}};
-let SETTINGS = {{SETTINGS_JSON}};
+const GLOBAL_DEFAULTS = {{DEFAULTS_JSON}};
+const PROJECT_DEFAULTS = {{PROJECT_DEFAULTS_JSON}};
+const DEFAULTS = Object.assign({}, GLOBAL_DEFAULTS, PROJECT_DEFAULTS);
+let SETTINGS = Object.assign({}, {{SETTINGS_JSON}}, {{PROJECT_SETTINGS_JSON}});
 
 function $(id){ return document.getElementById(id); }
 
@@ -82,7 +84,7 @@ function save(){
 }
 
 function resetDefaults(){
-  if(!confirm("Reset global defaults?")) return;
+  if(!confirm("Reset global and project defaults?")) return;
   SETTINGS = Object.assign({}, DEFAULTS);
   render();
 }

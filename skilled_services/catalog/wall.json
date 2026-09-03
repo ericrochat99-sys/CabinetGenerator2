@@ -1,0 +1,5 @@
+[
+  {"code":"W3018","name":"Wall 30 High x 18 Wide","category":"Wall","cabinet_type":"Wall","default_width":18,"default_height":30,"default_depth":12,"minimum_width":9,"maximum_width":24,"width_increment":3,"door_count":1,"drawer_count":0,"shelf_count":2,"toe_kick":0,"construction_type":"Project Default","notes":"Standard 30-inch-high wall cabinet"},
+  {"code":"W3030","name":"Wall 30 High x 30 Wide","category":"Wall","cabinet_type":"Wall","default_width":30,"default_height":30,"default_depth":12,"minimum_width":24,"maximum_width":36,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":2,"toe_kick":0,"construction_type":"Project Default","notes":"Double-door wall cabinet"},
+  {"code":"W3642","name":"Wall 36 High x 42 Wide","category":"Wall","cabinet_type":"Wall","default_width":42,"default_height":36,"default_depth":12,"minimum_width":36,"maximum_width":48,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":3,"toe_kick":0,"construction_type":"Project Default","notes":"Wide wall cabinet"}
+]

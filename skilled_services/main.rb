@@ -5,7 +5,13 @@ require "digest"
 require "sketchup.rb"
 require_relative "version"
 require_relative "ui/dialog"
+require_relative "ui/cabinet_edit_tool"
 require_relative "services/update_checker"
+require_relative "catalog/loader"
+require_relative "settings/project_defaults"
+require_relative "services/metadata_service"
+require_relative "reports/report_service"
+require_relative "geometry/part_builder"
 
 
 
@@ -350,6 +356,7 @@ module SkilledServices
 
     def show_global_settings_dialog
       settings = merged_global_settings
+      project_settings = SkilledServices::Settings::ProjectDefaults.read
 
       @global_dialog ||= UI::HtmlDialog.new(
         dialog_title: "#{PLUGIN_NAME} — Global Settings",
@@ -360,7 +367,13 @@ module SkilledServices
         height: 640
       )
 
-      html = SkilledServices::DialogTemplate.render("global_settings", "DEFAULTS_JSON" => GLOBAL_DEFAULTS.to_json, "SETTINGS_JSON" => settings.to_json)
+      html = SkilledServices::DialogTemplate.render(
+        "global_settings",
+        "DEFAULTS_JSON" => GLOBAL_DEFAULTS.to_json,
+        "SETTINGS_JSON" => settings.to_json,
+        "PROJECT_DEFAULTS_JSON" => SkilledServices::Settings::ProjectDefaults::DEFAULTS.to_json,
+        "PROJECT_SETTINGS_JSON" => project_settings.to_json
+      )
 
       @global_dialog.set_html(html)
 
@@ -379,6 +392,8 @@ module SkilledServices
               end
           end
           write_global_settings(clean)
+          project_values = data.select { |key, _value| SkilledServices::Settings::ProjectDefaults::DEFAULTS.key?(key.to_sym) }
+          SkilledServices::Settings::ProjectDefaults.write(project_values)
           # If main dialog is open, re-load current type so defaults update immediately.
           if defined?(@dialog) && @dialog && @dialog.visible?
             @dialog.execute_script("if (window.refresh_from_globals) refresh_from_globals();")
@@ -442,6 +457,17 @@ def self.compute_model_number(params)
   w = (p[:width_in]  || 0).to_f
   d = (p[:depth_in]  || 0).to_f
   h = (p[:height_in] || 0).to_f
+
+  # JSON catalog codes are authoritative. Legacy type-derived numbering remains
+  # below only for cabinets created before the catalog migration.
+  catalog_code = (p[:catalog_code] || p["catalog_code"]).to_s.strip
+  unless catalog_code.empty?
+    fmt = lambda do |value|
+      number = value.to_f
+      (number - number.round).abs < 0.0005 ? number.round.to_i.to_s : ("%.3f" % number).sub(/0+$/, "").sub(/\.$/, "")
+    end
+    return "#{catalog_code}–#{fmt.call(h)}/#{fmt.call(d)}/#{fmt.call(w)}"
+  end
 
   # Choose a catalog base code from generator intent.
   code_base, category =
@@ -556,6 +582,7 @@ end
       group.set_attribute(dict, CABINET_ATTR_PARAMS_JSON, params.to_json)
       mn = (params[:model_number] || params["model_number"]).to_s
       group.set_attribute(dict, CABINET_ATTR_MODEL_NUMBER, mn) unless mn.empty?
+      SkilledServices::Services::MetadataService.write(group, params)
       nil
     end
 
@@ -1176,12 +1203,8 @@ def thickness_material_name(thk_in)
 
 def add_part_component(parent_ents, model, name:, x:, y:, z:, lx:, ly:, lz:, tag: nil, material: nil, edge_band: nil, edge_material: nil)
       defn = ensure_part_definition(model, name: name, lx: lx, ly: ly, lz: lz, edge_band: edge_band, edge_material: edge_material)
-      tr = Geom::Transformation.translation([x, y, z])
-      inst = parent_ents.add_instance(defn, tr)
-      inst.name = name
-      inst.layer = tag if tag
-      inst.material = material if material
-      inst
+      SkilledServices::Geometry::PartBuilder.add(parent_ents, defn,
+        name: name, x: x, y: y, z: z, tag: tag, material: material)
     end
 
     # Creates a reusable component from an arbitrary plan polygon extruded in Z.
@@ -1947,7 +1970,8 @@ when "hinge"
 
     def merged_params_for_type(type)
       defaults = defaults_for(type)
-      merged = defaults.merge(merged_global_settings)
+      project = SkilledServices::Settings::ProjectDefaults.cabinet_overrides(type)
+      merged = defaults.merge(project).merge(merged_global_settings)
 
       # Apply construction-mode globals that vary by cabinet family.
       # We keep existing defaults as the fallback to avoid unexpected output.
@@ -4333,6 +4357,18 @@ write_cabinet_attributes(root, params)
           init = merged_params_for_type("Base")
           @dialog.execute_script("set_form(#{init.to_json})")
         end
+        catalog = SkilledServices::Catalog::Loader.all
+        last_code = Sketchup.read_default(PREF_KEY, "last_catalog_code", catalog.first["code"]).to_s
+        @dialog.execute_script("initialize_catalog(#{catalog.to_json}, #{last_code.to_json})")
+      end
+
+      @dialog.add_action_callback("load_model") do |_ctx, code|
+        item = SkilledServices::Catalog::Loader.find(code)
+        next unless item
+        params = merged_params_for_type(item["cabinet_type"])
+        params.merge!(SkilledServices::Catalog::Loader.placement_params(code))
+        Sketchup.write_default(PREF_KEY, "last_catalog_code", item["code"])
+        @dialog.execute_script("set_form(#{params.to_json}); set_catalog_selection(#{item["code"].to_json});")
       end
 
       @dialog.add_action_callback("load_type") do |_ctx, type|
@@ -4582,15 +4618,18 @@ def self.add_countertops_to_selection
 
   countertop_types = ["Plastic Laminate", "Solid Surface", "Other (Buyout)"]
 
-  prompts  = ["Countertop thickness (in)", "Countertop material"]
-  defaults = [DEFAULT_COUNTERTOP_THK_IN, countertop_types.first]
-  lists    = ["", countertop_types.join("|")]
+  prompts  = ["Countertop thickness (in)", "Countertop material", "Layout", "Backsplash height (in)", "Create sink cutouts"]
+  defaults = [DEFAULT_COUNTERTOP_THK_IN, countertop_types.first, "Auto (Straight / L / U)", 4.0, "Yes"]
+  lists    = ["", countertop_types.join("|"), "Auto (Straight / L / U)|Straight|L Shape|U Shape", "", "Yes|No"]
 
   input = UI.inputbox(prompts, defaults, lists, "Add Countertops")
   return unless input
 
   ct_thk_in = input[0].to_f
   ct_mat    = input[1].to_s
+  layout = input[2].to_s
+  backsplash_height = in_to_length(input[3].to_f)
+  create_sink_cutouts = input[4].to_s == "Yes"
   ct_thk = in_to_length(ct_thk_in)
 
   # Group cabinets by top elevation (tolerance ~ 1/16")
@@ -4611,6 +4650,7 @@ def self.add_countertops_to_selection
     parent = model.active_entities.add_group
     parent.name = "Countertops - #{ct_mat}"
     parent.set_attribute(CABINET_ATTR_DICT, "countertop_material", ct_mat)
+    parent.set_attribute(CABINET_ATTR_DICT, "layout", layout)
     parent.layer = nil
     parent.hidden = false
     clusters.each_with_index do |c, idx|
@@ -4623,7 +4663,8 @@ def self.add_countertops_to_selection
         grp.hidden = false
         grp.set_attribute(CABINET_ATTR_DICT, "countertop_material", ct_mat)
         insts_in_section = sec[:insts]
-        _build_countertop_l_shape(grp.entities, insts_in_section, c[:z], ct_thk)
+        _build_countertop_l_shape(grp.entities, insts_in_section, c[:z], ct_thk,
+          backsplash_height: backsplash_height, create_sink_cutouts: create_sink_cutouts)
       end
     end
     model.commit_operation
@@ -4739,7 +4780,7 @@ def self._countertop_bridge_rects(instances, max_gap_in: 42.0, max_depth_diff_in
   rects
 end
 
-def self._build_countertop_l_shape(ents, cabinet_insts, top_z, ct_thk)
+def self._build_countertop_l_shape(ents, cabinet_insts, top_z, ct_thk, backsplash_height: 0.0, create_sink_cutouts: true)
   # Draw each cabinet footprint rectangle at top_z into a single entities context.
   # SketchUp will automatically merge coplanar faces where rectangles touch/overlap.
   tr_up = Geom::Transformation.translation([0, 0, top_z])
@@ -4774,6 +4815,25 @@ _countertop_bridge_rects(cabinet_insts, max_gap_in: 42.0, max_depth_diff_in: 6.0
   bface = ents.add_face(bp1, bp2, bp3, bp4)
   bface.reverse! if bface && bface.normal.z < 0
 end
+
+  # Create a centered rectangular sink opening for cataloged sink bases.
+  if create_sink_cutouts
+    cabinet_insts.each do |inst|
+      params = _cabinet_params_from_instance(inst) || {}
+      next unless _is_sink_base?(params)
+      bb = inst.bounds
+      cut_w = [in_to_length(params[:sink_cutout_width_in] || 22.0), bb.width - in_to_length(4)].min
+      cut_d = [in_to_length(params[:sink_cutout_depth_in] || 16.0), bb.depth - in_to_length(4)].min
+      cx = (bb.min.x + bb.max.x) * 0.5
+      back_y, depth = _cab_back_and_depth(inst)
+      cy = back_y + depth * 0.52
+      cut = ents.add_face(
+        [cx - cut_w / 2, cy - cut_d / 2, 0], [cx + cut_w / 2, cy - cut_d / 2, 0],
+        [cx + cut_w / 2, cy + cut_d / 2, 0], [cx - cut_w / 2, cy + cut_d / 2, 0]
+      )
+      cut.erase! if cut && cut.valid?
+    end
+  end
 
   # Ensure the countertop becomes a true solid by merging coplanar top faces
   # before extrusion (erasing internal coplanar edges yields contiguous faces).
@@ -4825,6 +4885,21 @@ end
     f.pushpull(ct_thk, false)
   end
 
+
+  # Backsplash follows each cabinet back edge, supporting straight, L, and U layouts.
+  if backsplash_height.to_f > 0.0
+    backsplash_thk = in_to_length(0.75)
+    cabinet_insts.each do |inst|
+      bb = inst.bounds
+      back_y, = _cab_back_and_depth(inst)
+      face = ents.add_face(
+        [bb.min.x, back_y, top_z + ct_thk], [bb.max.x, back_y, top_z + ct_thk],
+        [bb.max.x, back_y, top_z + ct_thk + backsplash_height], [bb.min.x, back_y, top_z + ct_thk + backsplash_height]
+      )
+      face.pushpull(backsplash_thk, false) if face
+    end
+  end
+
   # Optional: soften internal coplanar edges for nicer selection
   ents.grep(Sketchup::Edge).each do |e|
     next unless e.faces.length == 2
@@ -4855,6 +4930,7 @@ def create_shop_scenes_sections_and_front_all
   model.start_operation("Create Shop Drawing Scenes", true)
   begin
     _install_section_scene_observer(model)
+    _create_standard_shop_views(model, view, cabs)
     _create_front_scene_all_cabinets(model, view, cabs)
     _create_right_section_scenes_by_type(model, view, cabs)
     model.commit_operation
@@ -4866,6 +4942,45 @@ rescue => e
   UI.messagebox("Scene creation failed:\n#{e.class}: #{e.message}\n\n#{e.backtrace&.first(12)&.join("\n")}")
 end
 module_function :create_shop_scenes_sections_and_front_all
+
+def _create_standard_shop_views(model, view, cabs)
+  bb = _combined_bounds(cabs)
+  center = bb.center
+  distance = [bb.width, bb.depth, bb.height].max * 3.0 + in_to_length(24)
+  views = {
+    "PLAN" => [Geom::Point3d.new(center.x, center.y, center.z + distance), Y_AXIS],
+    "LEFT ELEVATION" => [Geom::Point3d.new(center.x - distance, center.y, center.z), Z_AXIS],
+    "RIGHT ELEVATION" => [Geom::Point3d.new(center.x + distance, center.y, center.z), Z_AXIS]
+  }
+  views.each do |name, (eye, up)|
+    _set_parallel_camera_and_zoom(view, eye: eye, target: center, up: up, zoom_entities: cabs)
+    page = _ensure_page(name)
+    page.use_camera = true if page.respond_to?(:use_camera=)
+  end
+
+  eye = Geom::Point3d.new(center.x + distance, center.y + distance, center.z + distance)
+  camera = Sketchup::Camera.new(eye, center, Z_AXIS)
+  camera.perspective = true
+  view.camera = camera
+  view.zoom(cabs)
+  page = _ensure_page("3D VIEW")
+  page.use_camera = true if page.respond_to?(:use_camera=)
+end
+module_function :_create_standard_shop_views
+
+def create_professional_report(kind)
+  model = Sketchup.active_model
+  service = SkilledServices::Reports::ReportService.new(model)
+  csv = service.to_csv(kind)
+  label = kind.to_s.split("_").map(&:capitalize).join(" ")
+  path = UI.savepanel("Save #{label} Report (CSV)", model.path.to_s.empty? ? nil : File.dirname(model.path), "#{kind}_report.csv")
+  return unless path
+  File.open(path, "wb") { |file| file.write(csv) }
+  UI.messagebox("Saved #{label} report:\n#{path}")
+rescue StandardError => e
+  UI.messagebox("#{label || 'Report'} failed:\n#{e.class}: #{e.message}")
+end
+module_function :create_professional_report
 
 # -------------------------------------------------------------------------
 # Report: Model numbers + quantities, sorted by room
@@ -5222,9 +5337,17 @@ module_function :_create_right_section_scenes_by_type
         sub = ext_menu.add_submenu(PLUGIN_NAME)
         sub.add_item("New / Place Cabinet…") { show_dialog(edit_selected: false) }
         sub.add_item("Edit Selected Cabinet…") { show_dialog(edit_selected: true) }
+        sub.add_item("Double-Click Cabinet Edit Tool") { Sketchup.active_model.select_tool(SkilledServices::Editing::CabinetEditTool.new) }
         sub.add_item("Create Shop Drawing Scenes (Right Sections + Front All)…") { create_shop_scenes_sections_and_front_all }
 
-        sub.add_item("Cabinet Report (by Room)…") { create_cabinet_report }
+        reports = sub.add_submenu("Reports")
+        reports.add_item("Cabinet Report…") { create_professional_report(:cabinet) }
+        reports.add_item("Bill of Materials…") { create_professional_report(:bill_of_materials) }
+        reports.add_item("Material Report…") { create_professional_report(:material) }
+        reports.add_item("Hardware Report…") { create_professional_report(:hardware) }
+        reports.add_item("Door Report…") { create_professional_report(:door) }
+        reports.add_item("Drawer Report…") { create_professional_report(:drawer) }
+        reports.add_item("Room Report…") { create_professional_report(:room) }
         sub.add_separator
         sub.add_item("Global Settings…") { show_global_settings_dialog }
         sub.add_item("Add Countertops to Selection…") { add_countertops_to_selection }

@@ -1,4 +1,4 @@
-name: Publish v1.1.2
+name: Publish v2.0.0
 
 on:
   push:
@@ -9,12 +9,11 @@ permissions:
 
 jobs:
   publish:
-    if: github.event.head_commit.message == 'Publish release v1.1.2'
+    if: github.event.head_commit.message == 'Publish release v2.0.0'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: b59c6660d627bde59d7db45303d09d0dd76cb6b6
           fetch-depth: 0
 
       - uses: ruby/setup-ruby@v1
@@ -29,20 +28,20 @@ jobs:
       - name: Verify version
         run: |
           version="$(ruby -I. -r./skilled_services/version -e 'print SkilledServices::VERSION')"
-          test "$version" = "1.1.2"
+          test "$version" = "2.0.0"
 
       - name: Build and verify RBZ
         run: |
           ruby scripts/build_rbz.rb
-          unzip -t dist/skilled-services-1.1.2.rbz
+          unzip -t dist/skilled-services-2.0.0.rbz
 
       - name: Create tag and release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git tag v1.1.2 b59c6660d627bde59d7db45303d09d0dd76cb6b6
-          git push origin v1.1.2
-          gh release create v1.1.2 dist/skilled-services-1.1.2.rbz \
-            --target b59c6660d627bde59d7db45303d09d0dd76cb6b6 \
-            --title "Skilled Services v1.1.2" \
+          git tag v2.0.0 "$GITHUB_SHA"
+          git push origin v2.0.0
+          gh release create v2.0.0 dist/skilled-services-2.0.0.rbz \
+            --target "$GITHUB_SHA" \
+            --title "Skilled Services v2.0.0" \
             --generate-notes

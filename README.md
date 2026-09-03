@@ -1,6 +1,6 @@
 # Skilled Services – Euro Cabinet Generator
 
-A SketchUp extension for creating configurable European-style cabinets, adding countertops, producing shop-drawing scenes, and generating cabinet reports.
+A SketchUp extension for creating configurable European-style cabinets from a JSON catalog, adding countertops, producing shop-drawing scenes, and generating production reports.
 
 ## Compatibility
 
@@ -19,7 +19,9 @@ A SketchUp extension for creating configurable European-style cabinets, adding c
 ## Project structure
 
 - `skilled_services.rb` registers the extension with SketchUp.
-- `skilled_services/main.rb` contains cabinet/model operations and dialog callbacks.
+- `skilled_services/main.rb` coordinates cabinet/model operations and dialog callbacks.
+- `skilled_services/catalog/` contains editable JSON cabinet families and the catalog loader.
+- `skilled_services/settings/`, `geometry/`, and `reports/` contain project defaults, reusable builders, and report services.
 - `skilled_services/services/update_checker.rb` checks the official GitHub Releases API for newer versions.
 - `skilled_services/ui/` contains reusable dialog templates and separate HTML, CSS, and JavaScript assets (`index.html`, `styles.css`, and `app.js`).
 - `skilled_services/version.rb` is the authoritative version source.

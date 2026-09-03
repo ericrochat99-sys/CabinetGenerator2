@@ -3,6 +3,87 @@
             const EMBED_DEFAULTS_JSON = {{EMBED_DEFAULTS_JSON}};
 
             let EDIT_TARGET_PID = null;
+            let CATALOG = [];
+            let CATALOG_MODE = "all";
+
+            function storedList(key){
+              try { return JSON.parse(localStorage.getItem(key) || "[]"); } catch(_e) { return []; }
+            }
+
+            function catalogMatches(){
+              const query = ($("catalog_search")?.value || "").trim().toLowerCase();
+              const category = $("catalog_category")?.value || "";
+              const favorites = storedList("cabinet_favorites");
+              const recent = storedList("cabinet_recent");
+              return CATALOG.filter(item => {
+                if (category && item.category !== category) return false;
+                if (query && !`${item.code} ${item.name} ${item.notes}`.toLowerCase().includes(query)) return false;
+                if (CATALOG_MODE === "favorites" && !favorites.includes(item.code)) return false;
+                if (CATALOG_MODE === "recent" && !recent.includes(item.code)) return false;
+                return true;
+              }).sort((a, b) => {
+                if (CATALOG_MODE !== "recent") return a.code.localeCompare(b.code);
+                return recent.indexOf(a.code) - recent.indexOf(b.code);
+              });
+            }
+
+            function renderCatalog(keepCode){
+              const select = $("catalog_model");
+              if (!select) return;
+              const items = catalogMatches();
+              select.innerHTML = "";
+              items.forEach(item => {
+                const option = document.createElement("option");
+                option.value = item.code;
+                option.textContent = `${item.code} — ${item.name}`;
+                select.appendChild(option);
+              });
+              if (keepCode && items.some(item => item.code === keepCode)) select.value = keepCode;
+              updateCatalogDetails();
+            }
+
+            function updateCatalogDetails(){
+              const code = $("catalog_model")?.value;
+              const item = CATALOG.find(candidate => candidate.code === code);
+              if ($("catalog_notes")) $("catalog_notes").textContent = item ? item.notes : "No cabinets match this filter.";
+              const favorites = storedList("cabinet_favorites");
+              if ($("toggle_favorite")) $("toggle_favorite").textContent = favorites.includes(code) ? "★ Favorited" : "☆ Favorite";
+            }
+
+            function chooseCatalogModel(code, requestDefaults = true){
+              const item = CATALOG.find(candidate => candidate.code === code);
+              if (!item) return;
+              $("catalog_code").value = item.code;
+              const recent = storedList("cabinet_recent").filter(value => value !== item.code);
+              recent.unshift(item.code);
+              localStorage.setItem("cabinet_recent", JSON.stringify(recent.slice(0, 10)));
+              updateCatalogDetails();
+              if (requestDefaults && window.sketchup && sketchup.load_model) sketchup.load_model(item.code);
+            }
+
+            function set_catalog_selection(code){
+              const item = CATALOG.find(candidate => candidate.code === code);
+              if (!item) return;
+              $("catalog_category").value = item.category;
+              renderCatalog(code);
+              $("catalog_model").value = code;
+              $("catalog_code").value = code;
+              updateCatalogDetails();
+            }
+
+            function initialize_catalog(items, lastCode){
+              CATALOG = Array.isArray(items) ? items : [];
+              const category = $("catalog_category");
+              category.innerHTML = '<option value="">All Categories</option>';
+              [...new Set(CATALOG.map(item => item.category))].sort().forEach(value => {
+                const option = document.createElement("option"); option.value = value; option.textContent = value; category.appendChild(option);
+              });
+              const selected = CATALOG.find(item => item.code === lastCode) || CATALOG[0];
+              if (selected) { category.value = selected.category; renderCatalog(selected.code); chooseCatalogModel(selected.code, true); }
+            }
+
+            window.initialize_catalog = initialize_catalog;
+            window.set_catalog_selection = set_catalog_selection;
 
             function setEditMode(pid, label){
               const p = parseInt(pid, 10);
@@ -230,7 +311,8 @@
             }
 
 function updateDoorCount(){
-  $("door_count").value = doorSplitCountForWidth($("width_in").value).toString();
+  const item = CATALOG.find(candidate => candidate.code === ($("catalog_code")?.value || ""));
+  $("door_count").value = (item ? item.door_count : doorSplitCountForWidth($("width_in").value)).toString();
 }
 
 function computeDrawerUsableInches(){
@@ -1236,6 +1318,7 @@ function gather(){
                 (t === "ADA Sink") ? 21.0 : 24.0;
 
               return {
+                catalog_code: $("catalog_code") ? $("catalog_code").value : "",
                 cabinet_type: t,
                 auto_name: $("auto_name").checked,
                 room: ($("room") ? $("room").value : ""),
@@ -1247,6 +1330,13 @@ function gather(){
 
                 panel_thk_in: num("panel_thk_in", 0.75),
                 back_thk_in:  num("back_thk_in", (t === "ADA Sink") ? 0.0 : 0.75),
+                shelf_thk_in: num("shelf_thk_in", 0.75),
+                construction_type: $("construction_type").value,
+                cabinet_construction: $("cabinet_construction").value,
+                door_style: $("door_style").value,
+                drawer_box_style: $("drawer_box_style").value,
+                hardware: $("hardware").value,
+                mat_parts: $("mat_parts").value,
                 finish_left_end: $("finish_left_end").checked,
                 finish_right_end: $("finish_right_end").checked,
 
@@ -1257,6 +1347,7 @@ function gather(){
                 toe_recess_in: num("toe_recess_in", (t === "ADA Sink") ? 0.0 : 3.0),
 
                 shelf_count: intNum("shelf_count", (t === "ADA Sink") ? 0 : 1),
+                door_count: intNum("door_count", 0),
 
                 drawer_count: intNum("drawer_count", 1),
                 use_slides: $("use_slides").checked,
@@ -1288,6 +1379,20 @@ function gather(){
             }
 
             function wireEvents(){
+              $("catalog_search").addEventListener("input", () => renderCatalog($("catalog_code").value));
+              $("catalog_category").addEventListener("change", () => renderCatalog());
+              $("catalog_model").addEventListener("change", event => chooseCatalogModel(event.target.value, true));
+              $("toggle_favorite").addEventListener("click", () => {
+                const code = $("catalog_model").value; if (!code) return;
+                let values = storedList("cabinet_favorites");
+                values = values.includes(code) ? values.filter(value => value !== code) : values.concat(code);
+                localStorage.setItem("cabinet_favorites", JSON.stringify(values)); renderCatalog(code);
+              });
+              document.querySelectorAll(".catalog-tab").forEach(button => button.addEventListener("click", () => {
+                CATALOG_MODE = button.dataset.mode;
+                document.querySelectorAll(".catalog-tab").forEach(tab => tab.classList.toggle("active", tab === button));
+                renderCatalog($("catalog_code").value);
+              }));
               $("height_preset").addEventListener("change", () => {
                 const v = $("height_preset").value;
                 if (v) $("height_in").value = v;
@@ -1402,6 +1507,7 @@ function gather(){
               clearEditMode();
 
               $("cabinet_type").value = d.cabinet_type || "Base";
+              if ($("catalog_code")) $("catalog_code").value = d.catalog_code || "";
               $("auto_name").checked = (d.auto_name !== false);
               if ($("room")) $("room").value = d.room || "";
               $("name").value = d.name || "";
@@ -1412,6 +1518,12 @@ function gather(){
 
               $("panel_thk_in").value = d.panel_thk_in;
               $("back_thk_in").value = d.back_thk_in;
+              $("shelf_thk_in").value = d.shelf_thk_in ?? d.panel_thk_in;
+              $("construction_type").value = d.construction_type || "Frameless";
+              $("cabinet_construction").value = d.cabinet_construction || "Frameless";
+              $("door_style").value = d.door_style || "Slab";
+              $("drawer_box_style").value = d.drawer_box_style || "Melamine";
+              $("hardware").value = d.hardware || "";
 
               $("finish_left_end").checked = !!d.finish_left_end;
               $("finish_right_end").checked = !!d.finish_right_end;
