@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "json"
-require "net/http"
 require "uri"
 
 module SkilledServices
@@ -12,8 +11,6 @@ module SkilledServices
     LAST_CHECK_KEY = "last_checked_at".freeze
     CHECK_INTERVAL = 86_400
     STARTUP_DELAY = 5.0
-    NETWORK_TIMEOUT = 5
-
     class NoReleaseError < StandardError; end
 
     module_function
@@ -30,7 +27,29 @@ module SkilledServices
       return unless manual || check_due?
 
       @checking = true
-      release = latest_release
+      latest_release do |release, error|
+        begin
+          raise error if error
+
+          process_release(release, manual)
+        rescue NoReleaseError
+          ::UI.messagebox("No Skilled Services releases have been published yet.") if manual
+        rescue StandardError => callback_error
+          if manual
+            ::UI.messagebox("Unable to check for updates.\n\n#{callback_error.message}")
+          end
+        ensure
+          finish_check(manual)
+        end
+      end
+    rescue StandardError => error
+      if manual
+        ::UI.messagebox("Unable to check for updates.\n\n#{error.message}")
+      end
+      finish_check(manual)
+    end
+
+    def process_release(release, manual)
       latest_version = parse_version(release.fetch("tag_name"))
       installed_version = parse_version(SkilledServices::VERSION)
 
@@ -39,36 +58,40 @@ module SkilledServices
       elsif manual
         ::UI.messagebox("Skilled Services is up to date (version #{SkilledServices::VERSION}).")
       end
-    rescue NoReleaseError
-      ::UI.messagebox("No Skilled Services releases have been published yet.") if manual
-    rescue StandardError => error
-      if manual
-        ::UI.messagebox("Unable to check for updates.\n\n#{error.message}")
-      end
-    ensure
+    end
+
+    def finish_check(manual)
       mark_checked unless manual
       @checking = false
+      @request = nil
     end
 
     def latest_release
-      uri = URI.parse(RELEASE_API_URL)
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-      http.open_timeout = NETWORK_TIMEOUT
-      http.read_timeout = NETWORK_TIMEOUT
+      request = Sketchup::Http::Request.new(RELEASE_API_URL, Sketchup::Http::GET)
+      request.headers = {
+        "Accept" => "application/vnd.github+json",
+        "User-Agent" => "SkilledServices-SketchUp/#{SkilledServices::VERSION}",
+        "X-GitHub-Api-Version" => "2022-11-28"
+      }
 
-      request = Net::HTTP::Get.new(uri.request_uri)
-      request["Accept"] = "application/vnd.github+json"
-      request["User-Agent"] = "SkilledServices-SketchUp/#{SkilledServices::VERSION}"
-      request["X-GitHub-Api-Version"] = "2022-11-28"
+      # Retain the request until its asynchronous callback runs. SketchUp can
+      # otherwise garbage-collect it and silently cancel the request.
+      @request = request
+      started = request.start do |_completed_request, response|
+        begin
+          status = response.status_code.to_i
+          raise NoReleaseError if status == 404
+          raise "GitHub returned HTTP #{status}" unless status.between?(200, 299)
 
-      response = http.request(request)
-      raise NoReleaseError if response.code.to_i == 404
-      raise "GitHub returned HTTP #{response.code}" unless response.is_a?(Net::HTTPSuccess)
+          yield JSON.parse(response.body), nil
+        rescue JSON::ParserError
+          yield nil, RuntimeError.new("GitHub returned an invalid release response")
+        rescue StandardError => error
+          yield nil, error
+        end
+      end
 
-      JSON.parse(response.body)
-    rescue JSON::ParserError
-      raise "GitHub returned an invalid release response"
+      raise "SketchUp could not start the update request" unless started
     end
 
     def parse_version(value)
