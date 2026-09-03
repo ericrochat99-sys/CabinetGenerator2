@@ -2,6 +2,15 @@
 
 All notable changes to this extension are documented here.
 
+## [2.0.1] - 2026-09-03
+
+### Fixed
+
+- Populated core B24 placement values directly in the dialog markup as a resilient startup fallback.
+- Initialized defaults before wiring secondary controls so one UI error cannot leave the form blank.
+- Retried the SketchUp ready callback until the HtmlDialog bridge is available.
+- Guarded favorites and recent-cabinet storage for HtmlDialog environments that restrict local storage.
+
 ## [2.0.0] - 2026-09-03
 
 ### Added

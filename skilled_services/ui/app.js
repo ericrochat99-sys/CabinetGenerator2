@@ -56,7 +56,7 @@
               $("catalog_code").value = item.code;
               const recent = storedList("cabinet_recent").filter(value => value !== item.code);
               recent.unshift(item.code);
-              localStorage.setItem("cabinet_recent", JSON.stringify(recent.slice(0, 10)));
+              try { localStorage.setItem("cabinet_recent", JSON.stringify(recent.slice(0, 10))); } catch(_e) {}
               updateCatalogDetails();
               if (requestDefaults && window.sketchup && sketchup.load_model) sketchup.load_model(item.code);
             }
@@ -1386,7 +1386,7 @@ function gather(){
                 const code = $("catalog_model").value; if (!code) return;
                 let values = storedList("cabinet_favorites");
                 values = values.includes(code) ? values.filter(value => value !== code) : values.concat(code);
-                localStorage.setItem("cabinet_favorites", JSON.stringify(values)); renderCatalog(code);
+                try { localStorage.setItem("cabinet_favorites", JSON.stringify(values)); } catch(_e) {} renderCatalog(code);
               });
               document.querySelectorAll(".catalog-tab").forEach(button => button.addEventListener("click", () => {
                 CATALOG_MODE = button.dataset.mode;
@@ -1594,9 +1594,18 @@ function gather(){
               requestModelNumber();
             };
 
-            wireEvents();
+            function bootstrapDialog(){
+              // Populate first. A secondary control must never prevent core defaults.
+              try { if (window.set_form) window.set_form(EMBED_DEFAULTS_JSON); } catch(error) { console.error("Default initialization failed", error); }
+              try { wireEvents(); } catch(error) { console.error("Event initialization failed", error); }
+              const notifyReady = () => {
+                try {
+                  if (window.sketchup && sketchup.ready) sketchup.ready();
+                  else window.setTimeout(notifyReady, 50);
+                } catch(error) { console.error("SketchUp ready callback failed", error); }
+              };
+              notifyReady();
+            }
 
-            document.addEventListener("DOMContentLoaded", () => {
-              if (window.set_form) window.set_form(EMBED_DEFAULTS_JSON);
-              if (window.sketchup && sketchup.ready) sketchup.ready();
-            });
+            if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bootstrapDialog, { once: true });
+            else bootstrapDialog();

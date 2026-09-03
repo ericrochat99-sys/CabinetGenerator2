@@ -23,8 +23,8 @@
             <div class="section_title">Cabinet Catalog</div>
             <div class="grid">
               <div class="row"><label>Search</label><input id="catalog_search" type="search" placeholder="Code or cabinet name"></div>
-              <div class="row"><label>Category</label><select id="catalog_category"></select></div>
-              <div class="row"><label>Cabinet Model</label><select id="catalog_model"></select></div>
+              <div class="row"><label>Category</label><select id="catalog_category"><option value="Base">Base</option></select></div>
+              <div class="row"><label>Cabinet Model</label><select id="catalog_model"><option value="B24">B24 — Base 24</option></select></div>
               <div class="row"><label>&nbsp;</label><button id="toggle_favorite" class="secondary" type="button">☆ Favorite</button></div>
             </div>
             <div class="catalog-tabs">
@@ -65,7 +65,7 @@
                     <option>Sink Base</option>
                     <option>ADA Sink</option>
                   </select>
-                  <input id="catalog_code" type="hidden">
+                  <input id="catalog_code" type="hidden" value="B24">
                 </div>
                 <div class="row">
                   <label class="checkbox">
@@ -85,18 +85,18 @@
               </div>
 
               <div class="grid">
-                <div class="row"><label>Width (in) (max 48)</label><input id="width_in" type="number" step="0.001"></div>
-                <div class="row"><label>Depth (in)</label><input id="depth_in" type="number" step="0.001"></div>
+                <div class="row"><label>Width (in) (max 48)</label><input id="width_in" type="number" step="0.001" value="24"></div>
+                <div class="row"><label>Depth (in)</label><input id="depth_in" type="number" step="0.001" value="24"></div>
 
                 <div class="row">
                   <label>Height Preset</label>
-                  <select id="height_preset"></select>
+                  <select id="height_preset"><option value="34.5">34.5</option></select>
                 </div>
-                <div class="row"><label>Finished Height to Countertop Top (in)</label><input id="height_in" type="number" step="0.001"></div>
+                <div class="row"><label>Finished Height to Countertop Top (in)</label><input id="height_in" type="number" step="0.001" value="34.5"></div>
 
-                <div class="row"><label>Shelves (count)</label><input id="shelf_count" type="number" step="1" min="0"></div>
+                <div class="row"><label>Shelves (count)</label><input id="shelf_count" type="number" step="1" min="0" value="1"></div>
                 <div class="row" id="cubby_target_row" style="display:none;"><label>Cubby Size Target (in.)</label><select id="cubby_target_in"><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option></select></div>
-                <div class="row"><label>Doors (auto split @ 24")</label><input id="door_count" type="text" disabled /></div>
+                <div class="row"><label>Doors (auto split @ 24")</label><input id="door_count" type="text" value="2" disabled /></div>
               </div>
             </div>
           </details>
