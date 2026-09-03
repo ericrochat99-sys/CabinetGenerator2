@@ -2,6 +2,19 @@
 
 All notable changes to this extension are documented here.
 
+## [2.0.2] - 2026-09-03
+
+### Changed
+
+- Added complete global and per-cabinet-type placement defaults for Base, Wall, Tall, Sink Base, ADA Sink, Trash Can, Cubbies, all corner bases, and Appliance End Panel.
+- Cabinet-type selection now starts from the selected type's standards instead of stale saved values.
+- Added configurable 24-inch double-door and 37-inch drawer-bank split thresholds, Trash Can drawer-box offset, and Appliance End Panel return dimensions.
+
+### Fixed
+
+- Passed construction thicknesses and hardware defaults through the cabinet form into generated geometry.
+- Corrected the project toe-kick default to 4 inches and enabled toe kicks for Trash Can, Cubbies, and corner-base types.
+
 ## [2.0.1] - 2026-09-03
 
 ### Fixed

@@ -286,6 +286,13 @@ module SkilledServices
       drawer_front_thk_in: 0.75,
 
       box_thk_in: 0.75,
+      stretcher_width_in: 5.0,
+      reveal_center_in: 0.125,
+      automatic_double_door_threshold_in: 24.0,
+      automatic_drawer_bank_split_threshold_in: 37.0,
+      trash_drawer_box_bottom_offset_in: 0.5,
+      aep_front_return_width_in: 1.5,
+      aep_front_return_thk_in: 0.75,
       front_color_hex: "#aaaaaa",
       carcass_color_hex: "#dcceaa",
       edgeband_color_hex: "#c88c28",
@@ -1564,11 +1571,11 @@ when "hinge"
     # ----------------------------
     # Rules
     # ----------------------------
-    def door_count_for_width(width_in)
-      (width_in.to_f >= 24.0) ? 2 : 1
+    def door_count_for_width(width_in, threshold_in = 24.0)
+      (width_in.to_f >= threshold_in.to_f) ? 2 : 1
     end
-    def drawer_split_count_for_width(width_in)
-      (width_in.to_f >= 37.0) ? 2 : 1
+    def drawer_split_count_for_width(width_in, threshold_in = 37.0)
+      (width_in.to_f >= threshold_in.to_f) ? 2 : 1
     end
 
     # Manufacturer geometry for the 36x36 L-shaped cabinet uses 19.25" straight
@@ -1603,7 +1610,7 @@ when "hinge"
       # Toe kick as separate base applies to Base/Tall/Sink Base.
       # ADA Sink should be leg-supported / open knee space; toe base is not typical and breaks clearance.
       # Corner bases and Trash Can are base-like and use the standard toe base.
-      (t == "Base" || t == "Tall" || t == "Sink Base" || t == "Trash Can" ||
+      (t == "Base" || t == "Tall" || t == "Sink Base" || t == "Trash Can" || t == "Cubbies" ||
        t == "Pie-Cut Corner Base" || t == "Diagonal Corner Base" || t == "Blind Corner Base")
     end
 
@@ -1774,6 +1781,10 @@ when "hinge"
 
         panel_thk_in: 0.75,
         back_thk_in: 0.75,
+        shelf_thk_in: 0.75,
+        door_thk_in: 0.75,
+        drawer_front_thk_in: 0.75,
+        box_thk_in: 0.75,
 
         # Base default: Stretchers. Wall/Tall forced to Full Top.
         top_mode: "Stretchers",
@@ -1793,7 +1804,6 @@ when "hinge"
 
         # doors
         show_doors: true,
-        door_thk_in: 0.75,
         hinge_side: "Auto",
         door_swing: "Closed",
         open_angle_deg: 95.0,
@@ -1805,9 +1815,21 @@ when "hinge"
         # partitions (doors-only): number of interior vertical partitions
         partition_count: 0,
 
+        add_wire_pulls: true,
+        add_hinges: true,
+        add_door_bumpers: true,
+        add_shelf_supports: true,
+        add_cam_lock: true,
+        add_countertop_brackets: true,
+        automatic_double_door_threshold_in: 24.0,
+        automatic_drawer_bank_split_threshold_in: 37.0,
+
         # sink / countertop
         false_front_height_in: 6.0, # dummy drawer above doors
         countertop_thk_in: 1.50,
+        trash_drawer_box_bottom_offset_in: 0.5,
+        aep_front_return_width_in: 1.5,
+        aep_front_return_thk_in: 0.75,
 
         # ADA sink targets
         ada_knee_clear_h_in: 27.0,
@@ -1912,6 +1934,15 @@ when "hinge"
         base[:toe_height_in] = 0.0
         base[:toe_recess_in] = 0.0
         base[:top_mode] = "Full Top"
+      when "Appliance End Panel"
+        base[:drawer_count] = 0
+        base[:use_slides] = false
+        base[:shelf_count] = 0
+        base[:partition_count] = 0
+        base[:show_doors] = false
+        base[:toe_height_in] = 0.0
+        base[:toe_recess_in] = 0.0
+        base[:top_mode] = "Full Top"
       else # Base
         base[:depth_in] = 24.0
         base[:height_in] = 34.5
@@ -2004,6 +2035,21 @@ when "hinge"
         merged[:toe_recess_in] = defaults[:toe_recess_in] if merged[:toe_recess_in].to_f <= 0.0
       end
 
+      merged
+    end
+
+    def standard_params_for_type(type)
+      defaults = defaults_for(type)
+      project = SkilledServices::Settings::ProjectDefaults.cabinet_overrides(type)
+      merged = defaults.merge(project).merge(merged_global_settings)
+
+      case type.to_s
+      when "Wall", "Tall", "Cubbies", "Appliance End Panel"
+        merged[:top_mode] = "Full Top"
+      else
+        merged[:top_mode] = (merged[:base_top_mode] || defaults[:top_mode]).to_s
+      end
+      merged[:back_thk_in] = 0.5 if type.to_s == "ADA Sink"
       merged
     end
 
@@ -2151,7 +2197,7 @@ when "hinge"
       drawer_gap = in_to_length(params[:drawer_gap_in])
       use_slides = !!params[:use_slides]
 
-      if type != "Base"
+      if type != "Base" && type != "Trash Can"
         drawer_count = 0
         use_slides = false
       end
@@ -2348,12 +2394,13 @@ when "hinge"
         )
       
         # Front return: 1-1/2" wide (X) x 3/4" thick (Y) x height, located at cabinet front.
-        return_w = in_to_length(1.5)
+        return_w = in_to_length(params[:aep_front_return_width_in] || 1.5)
+        return_thk = in_to_length(params[:aep_front_return_thk_in] || 0.75)
         add_part_component(
           ents, model,
           name: "AEP Front Return",
-          x: aep_panel_thk, y: d - aep_panel_thk, z: 0.to_l,
-          lx: return_w, ly: aep_panel_thk, lz: aep_h,
+          x: aep_panel_thk, y: d - return_thk, z: 0.to_l,
+          lx: return_w, ly: return_thk, lz: aep_h,
           material: mat_panel,
           # Required edgeband: front + outside end + top + bottom
           edge_band: [:yp, :xp, :zp, :zn],
@@ -3088,7 +3135,7 @@ end
         drawers_root.layer = tag_drawers
 
         front_y = d
-        split_count = drawer_split_count_for_width(width_in)
+        split_count = drawer_split_count_for_width(width_in, params[:automatic_drawer_bank_split_threshold_in] || 37.0)
 
         make_front_assemblies = lambda do |label, z, h_front|
           row_grp = drawers_root.entities.add_group
@@ -3227,7 +3274,8 @@ end
 	        drawer_rows.each do |row|
 	          if type == "Trash Can"
 	            # Drawer box is mounted 1/2" up from the cabinet bottom.
-	            z0 = carcass_z0 + thk + in_to_length(0.5)
+	            bottom_offset = in_to_length(params[:trash_drawer_box_bottom_offset_in] || 0.5)
+	            z0 = carcass_z0 + thk + bottom_offset
 	            boxh = [box_h - (thk + in_to_length(1.5)), 6.0].max
 	          else
 	            boxh = [row[:h] - 1.0, 3.0].max
@@ -3350,7 +3398,7 @@ end
           end
 
           if door_h > 0.0
-            door_count = door_count_for_width(width_in)
+            door_count = door_count_for_width(width_in, params[:automatic_double_door_threshold_in] || 24.0)
 
             if door_count == 2
               total_available = w - (2.0 * reveal_edge) - reveal_center
@@ -3614,7 +3662,7 @@ tag: tag_doors, material: mat_fronts,
           end
 
           if door_h > 0.0
-            door_count = door_count_for_width(width_in)
+            door_count = door_count_for_width(width_in, params[:automatic_double_door_threshold_in] || 24.0)
 
             if door_count == 2
               total_available = w - (2.0 * reveal_edge) - reveal_center
@@ -4373,15 +4421,7 @@ write_cabinet_attributes(root, params)
 
       @dialog.add_action_callback("load_type") do |_ctx, type|
         type = type.to_s
-        data = merged_params_for_type(type)
-        type_defaults = defaults_for(type)
-
-        # Changing the cabinet type always starts from that type's standard
-        # overall dimensions instead of recalling measurements from the last
-        # cabinet placed. Other saved type options remain intact.
-        [:width_in, :depth_in, :height_in].each do |key|
-          data[key] = type_defaults[key]
-        end
+        data = standard_params_for_type(type)
         @dialog.execute_script("set_form(#{data.to_json})")
       end
 
@@ -4393,8 +4433,8 @@ write_cabinet_attributes(root, params)
       end
 
       @dialog.add_action_callback("reset_all") do |_ctx|
-        ["Base", "Wall", "Tall", "Sink Base", "ADA Sink", "Diagonal Corner Base",
-         "Pie-Cut Corner Base", "Blind Corner Base"].each do |t|
+        ["Base", "Wall", "Tall", "Sink Base", "ADA Sink", "Trash Can", "Cubbies",
+         "Appliance End Panel", "Diagonal Corner Base", "Pie-Cut Corner Base", "Blind Corner Base"].each do |t|
           write_saved_for_type(t, defaults_for(t))
         end
         init = merged_params_for_type("Base")

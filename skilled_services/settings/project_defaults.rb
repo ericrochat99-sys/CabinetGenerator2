@@ -18,7 +18,7 @@ module SkilledServices
         base_cabinet_depth_in: 24.0,
         wall_cabinet_depth_in: 12.0,
         tall_cabinet_depth_in: 24.0,
-        toe_kick_height_in: 4.5,
+        toe_kick_height_in: 4.0,
         countertop_thickness_in: 1.5,
         shelf_thickness_in: 0.75,
         back_thickness_in: 0.75,

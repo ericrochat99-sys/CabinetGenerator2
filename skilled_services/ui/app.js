@@ -150,13 +150,13 @@
             function doorSplitCountForWidth(w){
               const width = parseFloat(w);
               if (Number.isNaN(width)) return 1;
-              return (width >= 24) ? 2 : 1;
+              return (width >= num("automatic_double_door_threshold_in", 24)) ? 2 : 1;
             }
 
             function drawerSplitCountForWidth(w){
               const width = parseFloat(w);
               if (Number.isNaN(width)) return 1;
-              return (width >= 36) ? 2 : 1;
+              return (width >= num("automatic_drawer_bank_split_threshold_in", 37)) ? 2 : 1;
             }
 
             // Mirror Ruby-side `cabinet_has_toe?` rules so the UI preview matches geometry.
@@ -166,7 +166,9 @@
               const lower = t.toLowerCase();
               if (lower.includes("wall")) return false;
               if (t === "ADA Sink") return false;
-              return (t === "Base" || t === "Tall" || t === "Sink Base" || t === "Cubbies");
+              return (t === "Base" || t === "Tall" || t === "Sink Base" || t === "Trash Can" ||
+                t === "Cubbies" || t === "Diagonal Corner Base" || t === "Pie-Cut Corner Base" ||
+                t === "Blind Corner Base");
             }
 
             function populateHeightPresets(type){
@@ -229,6 +231,7 @@
               const type = $("cabinet_type").value;
 
               const isBase = (type === "Base");
+              const isTrash = (type === "Trash Can");
               const isSink = (type === "Sink Base" || type === "ADA Sink");
               const isADA = (type === "ADA Sink");
               const isCubbies = (type === "Cubbies");
@@ -253,7 +256,7 @@
 
               
               $("drawer_count").disabled = !isBase;
-              $("use_slides").disabled = !isBase;
+              $("use_slides").disabled = !(isBase || isTrash);
               $("drawer_front_height_in").disabled = !isBase;
 
               // Cubbies: Tall cabinet carcass, no doors/drawers; shelves+partitions are auto-computed
@@ -283,9 +286,13 @@
 
               $("drawer_gap_in").disabled = !isBase;
 
-              if (!isBase) {
+              if (!isBase && !isTrash) {
                 $("drawer_count").value = "0";
                 $("use_slides").checked = false;
+              }
+              if (isTrash) {
+                $("drawer_count").value = "1";
+                $("use_slides").checked = true;
               }
 
               ["false_front_height_in","countertop_thk_in","ada_knee_clear_h_in","ada_apron_h_in","ada_knee_depth_in","ada_side_leg_depth_in"]
@@ -1331,6 +1338,8 @@ function gather(){
                 panel_thk_in: num("panel_thk_in", 0.75),
                 back_thk_in:  num("back_thk_in", (t === "ADA Sink") ? 0.0 : 0.75),
                 shelf_thk_in: num("shelf_thk_in", 0.75),
+                drawer_front_thk_in: num("drawer_front_thk_in", 0.75),
+                box_thk_in: num("box_thk_in", 0.75),
                 construction_type: $("construction_type").value,
                 cabinet_construction: $("cabinet_construction").value,
                 door_style: $("door_style").value,
@@ -1366,6 +1375,17 @@ function gather(){
                 reveal_center_in: num("reveal_center_in", 0.125),
 
                 partition_count: intNum("partition_count", 0),
+                add_wire_pulls: $("add_wire_pulls").checked,
+                add_hinges: $("add_hinges").checked,
+                add_door_bumpers: $("add_door_bumpers").checked,
+                add_shelf_supports: $("add_shelf_supports").checked,
+                add_cam_lock: $("add_cam_lock").checked,
+                add_countertop_brackets: $("add_countertop_brackets").checked,
+                automatic_double_door_threshold_in: num("automatic_double_door_threshold_in", 24),
+                automatic_drawer_bank_split_threshold_in: num("automatic_drawer_bank_split_threshold_in", 37),
+                trash_drawer_box_bottom_offset_in: num("trash_drawer_box_bottom_offset_in", 0.5),
+                aep_front_return_width_in: num("aep_front_return_width_in", 1.5),
+                aep_front_return_thk_in: num("aep_front_return_thk_in", 0.75),
 
                 false_front_height_in: num("false_front_height_in", 6.0),
                 countertop_thk_in: num("countertop_thk_in", 1.5),
@@ -1519,6 +1539,8 @@ function gather(){
               $("panel_thk_in").value = d.panel_thk_in;
               $("back_thk_in").value = d.back_thk_in;
               $("shelf_thk_in").value = d.shelf_thk_in ?? d.panel_thk_in;
+              $("drawer_front_thk_in").value = d.drawer_front_thk_in ?? 0.75;
+              $("box_thk_in").value = d.box_thk_in ?? 0.75;
               $("construction_type").value = d.construction_type || "Frameless";
               $("cabinet_construction").value = d.cabinet_construction || "Frameless";
               $("door_style").value = d.door_style || "Slab";
@@ -1553,6 +1575,17 @@ function gather(){
               $("reveal_center_in").value = d.reveal_center_in;
 
               $("partition_count").value = (d.partition_count ?? 0);
+              $("add_wire_pulls").checked = d.add_wire_pulls !== false;
+              $("add_hinges").checked = d.add_hinges !== false;
+              $("add_door_bumpers").checked = d.add_door_bumpers !== false;
+              $("add_shelf_supports").checked = d.add_shelf_supports !== false;
+              $("add_cam_lock").checked = d.add_cam_lock !== false;
+              $("add_countertop_brackets").checked = d.add_countertop_brackets !== false;
+              $("automatic_double_door_threshold_in").value = d.automatic_double_door_threshold_in ?? 24;
+              $("automatic_drawer_bank_split_threshold_in").value = d.automatic_drawer_bank_split_threshold_in ?? 37;
+              $("trash_drawer_box_bottom_offset_in").value = d.trash_drawer_box_bottom_offset_in ?? 0.5;
+              $("aep_front_return_width_in").value = d.aep_front_return_width_in ?? 1.5;
+              $("aep_front_return_thk_in").value = d.aep_front_return_thk_in ?? 0.75;
 
               $("false_front_height_in").value = d.false_front_height_in;
               $("countertop_thk_in").value = d.countertop_thk_in;
