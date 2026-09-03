@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: e6c0f21ea33435b9cabf556a21f5383947d13249
+          ref: b59c6660d627bde59d7db45303d09d0dd76cb6b6
           fetch-depth: 0
 
       - uses: ruby/setup-ruby@v1
@@ -40,9 +40,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git tag v1.1.2 e6c0f21ea33435b9cabf556a21f5383947d13249
+          git tag v1.1.2 b59c6660d627bde59d7db45303d09d0dd76cb6b6
           git push origin v1.1.2
           gh release create v1.1.2 dist/skilled-services-1.1.2.rbz \
-            --target e6c0f21ea33435b9cabf556a21f5383947d13249 \
+            --target b59c6660d627bde59d7db45303d09d0dd76cb6b6 \
             --title "Skilled Services v1.1.2" \
             --generate-notes
