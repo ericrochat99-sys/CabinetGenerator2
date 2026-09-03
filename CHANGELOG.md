@@ -2,6 +2,13 @@
 
 All notable changes to this extension are documented here.
 
+## [1.1.2] - 2026-09-03
+
+### Fixed
+
+- Replaced Ruby `Net::HTTP` with SketchUp's native asynchronous HTTP client for update checks.
+- Prevented GitHub certificate-store errors from blocking update checks in SketchUp.
+
 ## [1.1.1] - 2026-09-02
 
 ### Fixed
