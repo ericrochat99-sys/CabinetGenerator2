@@ -2,6 +2,14 @@
 
 All notable changes to this extension are documented here.
 
+## [2.1.0] - 2026-09-04
+
+### Changed
+
+- Rebranded the SketchUp extension, menus, dialogs, messages, documentation, updater, release artifacts, and package filename to ForgeCase.
+- Preserved the legacy internal Ruby namespace and preference identifiers so existing cabinet metadata and saved user settings remain compatible.
+- Renamed release packages to `forgecase-<version>.rbz`.
+
 ## [2.0.6] - 2026-09-04
 
 ### Fixed
