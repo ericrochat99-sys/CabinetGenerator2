@@ -8,7 +8,7 @@ ROOT = File.expand_path("..", __dir__)
 require File.join(ROOT, "skilled_services", "version")
 
 OUTPUT_DIR = File.join(ROOT, "dist")
-OUTPUT_FILE = File.join(OUTPUT_DIR, "skilled-services-#{SkilledServices::VERSION}.rbz")
+OUTPUT_FILE = File.join(OUTPUT_DIR, "forgecase-#{SkilledServices::VERSION}.rbz")
 RUNTIME_PATHS = ["skilled_services.rb", "skilled_services"].freeze
 REQUIRED_PATHS = [
   "skilled_services.rb",
@@ -106,7 +106,7 @@ def write_zip(output_file, staging_dir, files)
 end
 
 FileUtils.mkdir_p(OUTPUT_DIR)
-Dir.mktmpdir("skilled-services-rbz-") do |staging_dir|
+Dir.mktmpdir("forgecase-rbz-") do |staging_dir|
   FileUtils.cp(File.join(ROOT, "skilled_services.rb"), staging_dir)
   FileUtils.cp_r(File.join(ROOT, "skilled_services"), staging_dir)
   files = runtime_files(staging_dir)
