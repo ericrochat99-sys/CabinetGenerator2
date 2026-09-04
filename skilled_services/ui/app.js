@@ -585,18 +585,39 @@ function updateCubbiesAuto(){
               if (!$("auto_name").checked) return;
 
               const t = $("cabinet_type").value;
+              const code = ($("catalog_code") ? $("catalog_code").value : "").trim();
               const w = fmtNum($("width_in").value);
               const d = fmtNum($("depth_in").value);
               const h = fmtNum($("height_in").value);
-              const room = ($("room") ? $("room").value : "").trim();
+              const doors = Math.max(0, parseInt($("door_count")?.value || "0", 10) || 0);
+              const drawers = Math.max(0, parseInt($("drawer_count")?.value || "0", 10) || 0);
+              const shelves = Math.max(0, parseInt($("shelf_count")?.value || "0", 10) || 0);
 
-              let suffix = "";
-              if (t === "Tall") suffix = " Pantry";
-              if (t === "Sink Base") suffix = " Sink";
-              if (t === "ADA Sink") suffix = " ADA";
+              const cabinetLabel = {
+                "Base": drawers >= 2 ? "Drawer Base Cabinet" : "Base Cabinet",
+                "Wall": "Wall Cabinet",
+                "Tall": "Tall Cabinet",
+                "Sink Base": "Sink Base Cabinet",
+                "ADA Sink": "ADA Sink Cabinet",
+                "Trash Can": "Trash Pull-Out Cabinet",
+                "Cubbies": "Cubby Cabinet",
+                "Appliance End Panel": "Appliance End Panel",
+                "Diagonal Corner Base": "Diagonal Corner Base Cabinet",
+                "Pie-Cut Corner Base": "Pie-Cut Corner Base Cabinet",
+                "Blind Corner Base": "Blind Corner Base Cabinet"
+              }[t] || `${t} Cabinet`;
 
-              const base = `${t} ${w}x${d}x${h}${suffix}`.trim();
-              $("name").value = (room ? `${room} ${base}` : base);
+              const features = [];
+              if (doors > 0) features.push(`${doors} ${doors === 1 ? "Door" : "Doors"}`);
+              if (drawers > 0) features.push(`${drawers} ${drawers === 1 ? "Drawer" : "Drawers"}`);
+              if (shelves > 0) features.push(`${shelves} Adjustable ${shelves === 1 ? "Shelf" : "Shelves"}`);
+
+              const parts = [];
+              if (code) parts.push(code);
+              parts.push(cabinetLabel);
+              parts.push(`${w}"W × ${h}"H × ${d}"D`);
+              if (features.length) parts.push(features.join(", "));
+              $("name").value = parts.join(" — ");
             }
 
             function uiValidate(){

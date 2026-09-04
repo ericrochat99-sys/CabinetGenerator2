@@ -2,6 +2,14 @@
 
 All notable changes to this extension are documented here.
 
+## [Unreleased]
+
+### Changed
+
+- Cabinet instance names now identify the catalog code, cabinet style, width/height/depth, and door, drawer, and adjustable-shelf configuration.
+- Room names remain separate from the cabinet description so SketchUp does not duplicate the room prefix.
+
+
 ## [2.1.2] - 2026-09-04
 
 ### Added
