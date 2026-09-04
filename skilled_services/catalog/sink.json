@@ -1,4 +1,38 @@
 [
-  {"code":"SB30","name":"Sink Base 30","category":"Sink","cabinet_type":"Sink Base","default_width":30,"default_height":34.5,"default_depth":24,"minimum_width":24,"maximum_width":48,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":0,"toe_kick":4.5,"construction_type":"Project Default","notes":"False-front sink base"},
-  {"code":"ADA30","name":"ADA Sink 30","category":"Sink","cabinet_type":"ADA Sink","default_width":30,"default_height":34.5,"default_depth":21,"minimum_width":30,"maximum_width":48,"width_increment":3,"door_count":0,"drawer_count":0,"shelf_count":0,"toe_kick":0,"construction_type":"Project Default","notes":"Accessible knee-space sink base"}
+  {
+    "code": "SB30",
+    "name": "Sink Base 30",
+    "category": "Sink",
+    "cabinet_type": "Sink Base",
+    "default_width": 30,
+    "default_height": 34.5,
+    "default_depth": 24,
+    "minimum_width": 24,
+    "maximum_width": 48,
+    "width_increment": 3,
+    "door_count": 2,
+    "drawer_count": 0,
+    "shelf_count": 0,
+    "toe_kick": 4,
+    "construction_type": "Project Default",
+    "notes": "False-front sink base"
+  },
+  {
+    "code": "ADA30",
+    "name": "ADA Sink 30",
+    "category": "Sink",
+    "cabinet_type": "ADA Sink",
+    "default_width": 30,
+    "default_height": 34.5,
+    "default_depth": 21,
+    "minimum_width": 30,
+    "maximum_width": 48,
+    "width_increment": 3,
+    "door_count": 0,
+    "drawer_count": 0,
+    "shelf_count": 0,
+    "toe_kick": 0,
+    "construction_type": "Project Default",
+    "notes": "Accessible knee-space sink base"
+  }
 ]
