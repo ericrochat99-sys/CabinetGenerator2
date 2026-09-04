@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module SkilledServices
-  VERSION = "2.0.5".freeze
+  VERSION = "2.0.6".freeze
 end
