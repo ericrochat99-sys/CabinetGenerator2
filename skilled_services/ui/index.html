@@ -261,11 +261,15 @@
                 <div class="row"><label>False Drawer Front Height (in)</label><input id="false_front_height_in" type="number" step="0.001" value="6"></div>
                 <div class="row"><label>Countertop Thickness (in)</label><input id="countertop_thk_in" type="number" step="0.001" value="1.5"></div>
                 <div class="row"><label>ADA Knee Clearance Height (in)</label><input id="ada_knee_clear_h_in" type="number" step="0.001" value="27"></div>
-                <div class="row"><label>ADA Apron Height (in)</label><input id="ada_apron_h_in" type="number" step="0.001" value="3"></div>
-                <div class="row"><label>ADA Knee Depth (in) (17–25)</label><input id="ada_knee_depth_in" type="number" step="0.001" value="20"></div>
-                <div class="row"><label>ADA Side Leg Depth (in)</label><input id="ada_side_leg_depth_in" type="number" step="0.001" value="6"></div>
+                <div class="row"><label>Front Rail Height (in)</label><input id="front_rail_height_in" type="number" min="4" max="6" step="0.25" value="5"></div>
+                <div class="row"><label>Rear Mount Rail Height (in)</label><input id="mount_rail_height_in" type="number" step="0.25" value="4"></div>
+                <div class="row"><label>Access Panel</label><select id="access_panel_type"><option>Magnetic</option><option>Concealed Screws</option><option>Quarter-Turn Cam Latches</option><option>Touch Latches</option></select></div>
+                <div class="row"><label>Rail Joinery</label><select id="fastener_type"><option>Confirmat</option><option>Dowels</option><option>Lamello Clamex</option></select></div>
+                <div class="row"><label>Mounting</label><select id="mounting_type"><option>Wall Rail</option><option>French Cleat</option><option>Lag Screws Through Rail</option></select></div>
+                <div class="row"><label>Second Rear Rail</label><input id="second_mount_rail" type="checkbox"></div>
+                <div class="row"><label>Safety Tether</label><input id="safety_tether" type="checkbox"></div>
               </div>
-              <div class="muted">ADA construction uses upper side panels + front/rear legs, open knee space, and sloped apron. Finished height remains the countertop top.</div>
+              <div class="muted">Model 10580 is wall mounted with full-height sides, open top, open bottom, open back, front rail, rear mount rail, and a removable access panel. Countertop is by others.</div>
             </div>
           </details>
 
@@ -292,7 +296,10 @@
         reveal_edge_in: 0.0625, reveal_center_in: 0.125,
         false_front_height_in: 6, countertop_thk_in: 1.5,
         ada_knee_clear_h_in: 27, ada_apron_h_in: 3,
-        ada_knee_depth_in: 20, ada_side_leg_depth_in: 6
+        ada_knee_depth_in: 20, ada_side_leg_depth_in: 6,
+        front_rail_height_in: 5, mount_rail_height_in: 4,
+        access_panel_type: "Magnetic", fastener_type: "Confirmat",
+        mounting_type: "Wall Rail", second_mount_rail: false, safety_tether: false
       };
       const TYPES = {
         "Base": { width_in: 30, depth_in: 24, height_in: 34.5 },
