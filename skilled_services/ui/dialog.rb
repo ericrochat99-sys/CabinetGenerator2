@@ -13,11 +13,11 @@ module SkilledServices
       html = read_asset("#{base_name}.html")
       css_name = base_name == "index" ? "styles.css" : "#{base_name}.css"
       script_name = base_name == "index" ? "app.js" : "#{base_name}.js"
-      html.sub!("{{STYLES}}", read_asset(css_name))
-      html.sub!("{{SCRIPT}}", read_asset(script_name))
+      html.sub!("{{STYLES}}") { read_asset(css_name) }
+      html.sub!("{{SCRIPT}}") { read_asset(script_name) }
 
       replacements.each do |key, value|
-        html.gsub!("{{#{key}}}", value.to_s)
+        html.gsub!("{{#{key}}}") { value.to_s }
       end
 
       unresolved = html.scan(/\{\{[A-Z0-9_]+\}\}/).uniq
