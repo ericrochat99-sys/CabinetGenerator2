@@ -2,6 +2,14 @@
 
 All notable changes to this extension are documented here.
 
+## [2.0.6] - 2026-09-04
+
+### Fixed
+
+- Changed all 13 catalog models that use a toe kick from 4.5-inch to 4-inch defaults.
+- Kept wall cabinets and ADA sink models at zero toe-kick height.
+- Synchronized the immediate embedded catalog fallback with the packaged JSON catalogs.
+
 ## [2.0.5] - 2026-09-04
 
 ### Fixed
