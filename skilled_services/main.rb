@@ -492,7 +492,7 @@ def self.compute_model_number(params)
       # If width is in the partition-required range, prefer the SB64 family.
       w >= CabinetModelCatalog::PARTITION_MIN_W ? ["SB64", :base] : ["SB60", :base]
     when "ADA Sink"
-      ["KB00", :base]
+      ["10580", :base]
     when "Pie-Cut Corner Base"
       ["BCB", :base]
     when "Diagonal Corner Base"
@@ -1831,11 +1831,22 @@ when "hinge"
         aep_front_return_width_in: 1.5,
         aep_front_return_thk_in: 0.75,
 
-        # ADA sink targets
+        # Model 10580 ADA Wall Sink Cabinet
         ada_knee_clear_h_in: 27.0,
         ada_apron_h_in: 3.0,
-        ada_knee_depth_in: 20.0, # within 17–25
-        ada_side_leg_depth_in: 6.0, # front "leg" depth support
+        ada_knee_depth_in: 20.0,
+        ada_side_leg_depth_in: 6.0,
+        front_rail_height_in: 5.0,
+        mount_rail_height_in: 4.0,
+        access_panel_type: "Magnetic",
+        fastener_type: "Confirmat",
+        edge_banding: "1mm PVC",
+        core_material: "Particleboard",
+        laminate_color: "Project Default",
+        moisture_resistant_core: false,
+        french_cleat: false,
+        second_mount_rail: false,
+        safety_tether: false,
 
         # materials/tags
         # materials/tags omitted (UI section removed)
@@ -1922,18 +1933,27 @@ when "hinge"
         base[:partition_count] = 0
         base[:countertop_thk_in] = 1.5
       when "ADA Sink"
-        base[:depth_in] = 21.0
-        base[:height_in] = 34.5 # finished top of vanity/counter
+        # Model 10580: wall-mounted, frameless lavatory cabinet.
+        base[:catalog_code] = "10580"
+        base[:width_in] = 36.0
+        base[:depth_in] = 24.0
+        base[:height_in] = 32.0
+        base[:panel_thk_in] = 0.75
         base[:drawer_count] = 0
         base[:use_slides] = false
-        base[:false_front_height_in] = 6.0
+        base[:show_doors] = false
+        base[:false_front_height_in] = 5.0
+        base[:front_rail_height_in] = 5.0
+        base[:mount_rail_height_in] = 4.0
         base[:shelf_count] = 0
-        base[:back_thk_in] = 0.5
+        base[:back_thk_in] = 0.0
         base[:partition_count] = 0
-        base[:countertop_thk_in] = 1.5
+        base[:countertop_thk_in] = 0.0
         base[:toe_height_in] = 0.0
         base[:toe_recess_in] = 0.0
-        base[:top_mode] = "Full Top"
+        base[:top_mode] = "Open Top"
+        base[:access_panel_type] = "Magnetic"
+        base[:fastener_type] = "Confirmat"
       when "Appliance End Panel"
         base[:drawer_count] = 0
         base[:use_slides] = false
@@ -2049,7 +2069,7 @@ when "hinge"
       else
         merged[:top_mode] = (merged[:base_top_mode] || defaults[:top_mode]).to_s
       end
-      merged[:back_thk_in] = 0.5 if type.to_s == "ADA Sink"
+      merged[:back_thk_in] = 0.0 if type.to_s == "ADA Sink"
       merged
     end
 
@@ -2231,6 +2251,9 @@ when "hinge"
       ada_apron_h      = in_to_length(params[:ada_apron_h_in])
       ada_knee_depth   = in_to_length(params[:ada_knee_depth_in])
       ada_leg_depth    = in_to_length(params[:ada_side_leg_depth_in])
+      front_rail_h    = in_to_length(params[:front_rail_height_in] || params[:false_front_height_in] || 5.0)
+      mount_rail_h    = in_to_length(params[:mount_rail_height_in] || 4.0)
+      access_panel_type = (params[:access_panel_type] || "Magnetic").to_s
 
       # validation
       safe_positive!(w, "Width")
@@ -2280,11 +2303,22 @@ when "hinge"
       make_separate_toe = (use_toe && !(finish_left_end || finish_right_end))
 
       if is_ada_sink
-        safe_positive!(ada_knee_clear_h, "ADA knee clearance height")
-        safe_positive!(ada_apron_h, "ADA apron height")
-        safe_positive!(ada_knee_depth, "ADA knee depth")
-        raise ArgumentError, "ADA knee depth must be between 17 and 25" if ada_knee_depth < 17.0 || ada_knee_depth > 25.0
-        ada_leg_depth = clamp(ada_leg_depth, 3.0, d)
+        supported_thicknesses = [0.5, 0.625, 0.75]
+        raise ArgumentError, "Model 10580 width must be between 30 and 48 inches" unless width_in.between?(30.0, 48.0)
+        raise ArgumentError, "Model 10580 height is fixed at 32 inches" unless (finished_top_h.to_f - 32.0).abs < 0.001
+        raise ArgumentError, "Model 10580 depth must be 24 or 29 inches" unless [24.0, 29.0].any? { |value| (d.to_f - value).abs < 0.001 }
+        raise ArgumentError, "Material thickness must be 1/2, 5/8, or 3/4 inch" unless supported_thicknesses.any? { |value| (thk.to_f - value).abs < 0.001 }
+        raise ArgumentError, "Front rail height must be between 4 and 6 inches" unless front_rail_h.to_f.between?(4.0, 6.0)
+        safe_positive!(mount_rail_h, "Rear mount rail height")
+        raise ArgumentError, "Minimum ADA knee width is 30 inches" if (w - (2.0 * thk)).to_f < 30.0
+        raise ArgumentError, "Minimum ADA knee height is 27 inches" if (finished_top_h - front_rail_h).to_f < 27.0
+        raise ArgumentError, "Access panel type is invalid" unless ["Magnetic", "Concealed Screws", "Quarter-Turn Cam Latches", "Touch Latches"].include?(access_panel_type)
+        params[:catalog_code] = "10580"
+        params[:product_name] = "ADA Wall Sink Cabinet"
+        params[:cnc_operations] = ["rail joinery pilot holes", "access-panel hardware bores", "shelf-pin suppression"]
+        params[:ada_clear_knee_width_in] = (w - (2.0 * thk)).to_f
+        params[:ada_clear_knee_height_in] = (finished_top_h - front_rail_h).to_f
+        params[:structural_note] = "Provide a second rear rail or concealed steel reinforcement" if width_in > 42.0 && !params[:second_mount_rail]
       end
 
       # Tags
@@ -2616,82 +2650,74 @@ end
       # - Knee depth: 17–25"
       # ----------------------------
       if is_ada_sink
-        # ADA Sink (wedge-style) construction:
-        # - No legs/uprights: use full-height sides + back + top as primary structure
-        # - Open knee space (no bottom panel)
-        # - Removable wedge panel at the front
-        # NOTE: We still validate knee-clearance inputs, but we do not generate leg parts.
-        knee_clear_z = ada_knee_clear_h
-        raise ArgumentError, "ADA knee clearance must be less than cabinet top" if knee_clear_z >= cabinet_top_z
+        # Model 10580 ADA Wall Sink Cabinet: open top, bottom, back, and interior.
+        # The wall-mount and front rails span between full-height side panels.
+        panel_reveal = in_to_length(params[:reveal_edge_in] || 0.0625)
+        panel_width = inner_w - panel_reveal
+        panel_height = finished_top_h - front_rail_h - (2.0 * panel_reveal)
+        raise ArgumentError, "Access panel dimensions are invalid" if panel_width <= thk || panel_height <= thk
 
-        # Full-height sides (floor to cabinet top)
         add_part_component(ce, model,
-          name: "Side - Left (ADA)",
-          x: 0, y: 0, z: 0.0,
-          lx: thk, ly: d, lz: cabinet_top_z,
+          name: "Left Side",
+          x: 0, y: 0, z: 0,
+          lx: thk, ly: d, lz: finished_top_h,
           tag: tag_carcass, material: mat_parts,
-          edge_band: eb_left,
-          edge_material: mat_edge
+          edge_band: [:yp], edge_material: mat_edge
         )
         add_part_component(ce, model,
-          name: "Side - Right (ADA)",
-          x: (w - thk), y: 0, z: 0.0,
-          lx: thk, ly: d, lz: cabinet_top_z,
+          name: "Right Side",
+          x: (w - thk), y: 0, z: 0,
+          lx: thk, ly: d, lz: finished_top_h,
           tag: tag_carcass, material: mat_parts,
-          edge_band: eb_right,
-          edge_material: mat_edge
+          edge_band: [:yp], edge_material: mat_edge
         )
-
-        # Full top panel (always)
         add_part_component(ce, model,
-          name: "Top (ADA)",
-          x: thk, y: 0, z: top_z,
-          lx: inner_w, ly: d, lz: thk,
-          tag: tag_carcass, material: mat_parts
+          name: "Front Rail",
+          x: thk, y: (d - thk), z: (finished_top_h - front_rail_h),
+          lx: inner_w, ly: thk, lz: front_rail_h,
+          tag: tag_carcass, material: mat_parts,
+          edge_band: [:yp, :zn], edge_material: mat_edge
+        )
+        add_part_component(ce, model,
+          name: (params[:french_cleat] ? "Rear French Cleat" : "Rear Mount Rail"),
+          x: thk, y: 0, z: (finished_top_h - mount_rail_h),
+          lx: inner_w, ly: thk, lz: mount_rail_h,
+          tag: tag_carcass, material: mat_parts,
+          edge_band: [:yp], edge_material: mat_edge
         )
 
-
-        # Back panel (ADA): match section view (1/2\" typical). If back_thk is 0, skip.
-        if back_thk > 0.0
+        if params[:second_mount_rail]
           add_part_component(ce, model,
-            name: "Back (ADA)",
-            x: 0, y: 0, z: 0.0,
-            lx: w, ly: back_thk, lz: cabinet_top_z,
-            tag: tag_carcass, material: mat_parts
+            name: "Lower Rear Mount Rail",
+            x: thk, y: 0, z: (finished_top_h * 0.45),
+            lx: inner_w, ly: thk, lz: mount_rail_h,
+            tag: tag_carcass, material: mat_parts,
+            edge_band: [:yp], edge_material: mat_edge
           )
         end
 
-        # Removable sloped access panel (ADA): slopes from underside of the top panel down to knee-clear height.
-        begin
-          panel_thk = in_to_length(0.5)
-          knee_depth = clamp(ada_knee_depth, 17.0, 25.0)
-          knee_depth = [knee_depth, d].min
-          y_top = d
-          z_top = top_z
-          y_bot = d - knee_depth
-          z_bot = 0.0
+        access = add_part_component(ce, model,
+          name: "Removable Access Panel - #{access_panel_type}",
+          x: (thk + panel_reveal / 2.0), y: d, z: panel_reveal,
+          lx: panel_width, ly: door_thk, lz: panel_height,
+          tag: tag_doors, material: mat_fronts,
+          edge_band: [:xp, :xn, :zp, :zn], edge_material: mat_edge
+        )
+        access.set_attribute(CABINET_ATTR_DICT, "removable", true) if access.respond_to?(:set_attribute)
+        access.set_attribute(CABINET_ATTR_DICT, "access_panel_type", access_panel_type) if access.respond_to?(:set_attribute)
+        access.set_attribute(CABINET_ATTR_DICT, "grain_direction", "Vertical") if access.respond_to?(:set_attribute)
 
-          rp = ce.add_group
-          rp.name = "Removable Panel (ADA)"
-          rp.layer = tag_carcass
+        hardware_group = root.entities.add_group
+        hardware_group.name = "Hardware - #{access_panel_type}"
+        hardware_group.layer = tag_hardware
+        hardware_group.set_attribute(CABINET_ATTR_DICT, "fastener_type", (params[:fastener_type] || "Confirmat").to_s)
+        hardware_group.set_attribute(CABINET_ATTR_DICT, "safety_tether", !!params[:safety_tether])
 
-          pts = [
-            Geom::Point3d.new(thk, y_top, z_top),
-            Geom::Point3d.new(w - thk, y_top, z_top),
-            Geom::Point3d.new(w - thk, y_bot, z_bot),
-            Geom::Point3d.new(thk, y_bot, z_bot)
-          ]
-          face = rp.entities.add_face(pts)
-          if face
-            face.reverse! if face.normal.z < 0
-            face.pushpull(panel_thk)
-            rp.material = mat_parts if mat_parts
-          end
-        rescue
-          # ignore removable panel build errors
-        end
-
-        # (ADA) back + removable panel added above
+        root.set_attribute(CABINET_ATTR_DICT, "product_model", "10580")
+        root.set_attribute(CABINET_ATTR_DICT, "construction", "Frameless Wall Mounted")
+        root.set_attribute(CABINET_ATTR_DICT, "open_top", true)
+        root.set_attribute(CABINET_ATTR_DICT, "open_bottom", true)
+        root.set_attribute(CABINET_ATTR_DICT, "open_back", true)
       else
         # ----------------------------
         # Standard carcass construction
@@ -4341,11 +4367,8 @@ tag: tag_doors, material: mat_fronts,
         )
       end
 
-      # Wall-mount ADA Sink base 10" off the floor (raise entire assembly)
-      if is_ada_sink
-        z_off = in_to_length(10.0)
-        root.transform!(Geom::Transformation.translation([0.0, 0.0, z_off]))
-      end
+      # Model 10580 uses the cabinet's left-front-bottom as its local origin.
+      # Placement height is controlled by the installer/project, not baked into geometry.
 
 # Compute and persist a catalog model number for every generated cabinet.
 begin
