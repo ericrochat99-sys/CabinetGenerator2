@@ -2,7 +2,7 @@
 
 All notable changes to this extension are documented here.
 
-## [Unreleased]
+## [2.1.3] - 2026-09-04
 
 ### Changed
 
