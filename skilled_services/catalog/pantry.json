@@ -1,3 +1,20 @@
 [
-  {"code":"P2484","name":"Tall Pantry","category":"Pantry","cabinet_type":"Tall","default_width":24,"default_height":84,"default_depth":24,"minimum_width":18,"maximum_width":36,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":5,"toe_kick":4.5,"construction_type":"Project Default","notes":"Standard pantry"}
+  {
+    "code": "P2484",
+    "name": "Tall Pantry",
+    "category": "Pantry",
+    "cabinet_type": "Tall",
+    "default_width": 24,
+    "default_height": 84,
+    "default_depth": 24,
+    "minimum_width": 18,
+    "maximum_width": 36,
+    "width_increment": 3,
+    "door_count": 2,
+    "drawer_count": 0,
+    "shelf_count": 5,
+    "toe_kick": 4,
+    "construction_type": "Project Default",
+    "notes": "Standard pantry"
+  }
 ]
