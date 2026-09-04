@@ -1401,6 +1401,32 @@ function gather(){
             }
 
             function wireEvents(){
+              // Wire the primary action first. Optional catalog/preview controls
+              // must never be able to prevent cabinet placement if one of them
+              // fails while the dialog is initializing.
+              const placeNew = $("place_new");
+              if (placeNew) placeNew.addEventListener("click", () => {
+                try {
+                  const { issues } = uiValidate();
+                  if (issues.length) { applyValidationToUI(); return; }
+                  if (!beginPlace()) return;
+                  const payload = gather();
+                  payload.edit_target_pid = null; // always place new
+                  if (window.sketchup && sketchup.place) {
+                    sketchup.place(JSON.stringify(payload));
+                  } else {
+                    window.on_place_done(false);
+                    const statusEl = $("place_status");
+                    if (statusEl) statusEl.textContent = "SketchUp placement bridge is unavailable. Reopen the cabinet dialog.";
+                  }
+                } catch (error) {
+                  window.on_place_done(false);
+                  const statusEl = $("place_status");
+                  if (statusEl) statusEl.textContent = `Unable to place cabinet: ${error.message || error}`;
+                  console.error("Cabinet placement failed", error);
+                }
+              });
+
               $("catalog_search").addEventListener("input", () => renderCatalog($("catalog_code").value));
               $("catalog_category").addEventListener("change", () => renderCatalog());
               $("catalog_model").addEventListener("change", event => chooseCatalogModel(event.target.value, true));
@@ -1472,15 +1498,6 @@ function gather(){
 
               const _ce = $("cancel_edit"); if (_ce) _ce.addEventListener("click", () => {
                 clearEditMode();
-              });
-
-              const _pln = $("place_new"); if (_pln) _pln.addEventListener("click", () => {
-                const { issues } = uiValidate();
-                if (issues.length) { applyValidationToUI(); return; }
-                if (!beginPlace()) return;
-                const payload = gather();
-                payload.edit_target_pid = null; // always place new
-                if (window.sketchup && sketchup.place) sketchup.place(JSON.stringify(payload));
               });
 
               const _ple = $("apply_edit"); if (_ple) _ple.addEventListener("click", () => {
