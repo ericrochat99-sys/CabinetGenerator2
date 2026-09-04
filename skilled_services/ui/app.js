@@ -1,7 +1,7 @@
             function $(id){ return document.getElementById(id); }
 
             const EMBED_DEFAULTS_JSON = {{EMBED_DEFAULTS_JSON}};
-            const EMBEDDED_CATALOG_FALLBACK = [{"code":"B12","name":"Base 12","category":"Base","cabinet_type":"Base","default_width":12,"default_height":34.5,"default_depth":24,"minimum_width":9,"maximum_width":21,"width_increment":3,"door_count":1,"drawer_count":1,"shelf_count":1,"toe_kick":4,"construction_type":"Project Default","notes":"Single-door base"},{"code":"B24","name":"Base 24","category":"Base","cabinet_type":"Base","default_width":24,"default_height":34.5,"default_depth":24,"minimum_width":24,"maximum_width":36,"width_increment":3,"door_count":2,"drawer_count":1,"shelf_count":1,"toe_kick":4,"construction_type":"Project Default","notes":"Standard base cabinet"},{"code":"B36","name":"Base 36","category":"Base","cabinet_type":"Base","default_width":36,"default_height":34.5,"default_depth":24,"minimum_width":36,"maximum_width":48,"width_increment":3,"door_count":2,"drawer_count":1,"shelf_count":1,"toe_kick":4,"construction_type":"Project Default","notes":"Wide base cabinet"},{"code":"DB24","name":"Drawer Base 24","category":"Base","cabinet_type":"Base","default_width":24,"default_height":34.5,"default_depth":24,"minimum_width":12,"maximum_width":36,"width_increment":3,"door_count":0,"drawer_count":3,"shelf_count":0,"toe_kick":4,"construction_type":"Project Default","notes":"Three-drawer base"},{"code":"W3018","name":"Wall 30 High x 18 Wide","category":"Wall","cabinet_type":"Wall","default_width":18,"default_height":30,"default_depth":12,"minimum_width":9,"maximum_width":24,"width_increment":3,"door_count":1,"drawer_count":0,"shelf_count":2,"toe_kick":0,"construction_type":"Project Default","notes":"Standard 30-inch-high wall cabinet"},{"code":"W3030","name":"Wall 30 High x 30 Wide","category":"Wall","cabinet_type":"Wall","default_width":30,"default_height":30,"default_depth":12,"minimum_width":24,"maximum_width":36,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":2,"toe_kick":0,"construction_type":"Project Default","notes":"Double-door wall cabinet"},{"code":"W3642","name":"Wall 36 High x 42 Wide","category":"Wall","cabinet_type":"Wall","default_width":42,"default_height":36,"default_depth":12,"minimum_width":36,"maximum_width":48,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":3,"toe_kick":0,"construction_type":"Project Default","notes":"Wide wall cabinet"},{"code":"T2484","name":"Tall Utility 24 x 84","category":"Tall","cabinet_type":"Tall","default_width":24,"default_height":84,"default_depth":24,"minimum_width":18,"maximum_width":36,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":5,"toe_kick":4,"construction_type":"Project Default","notes":"Full-height utility cabinet"},{"code":"P2484","name":"Tall Pantry","category":"Pantry","cabinet_type":"Tall","default_width":24,"default_height":84,"default_depth":24,"minimum_width":18,"maximum_width":36,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":5,"toe_kick":4,"construction_type":"Project Default","notes":"Standard pantry"},{"code":"SB30","name":"Sink Base 30","category":"Sink","cabinet_type":"Sink Base","default_width":30,"default_height":34.5,"default_depth":24,"minimum_width":24,"maximum_width":48,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":0,"toe_kick":4,"construction_type":"Project Default","notes":"False-front sink base"},{"code":"ADA30","name":"ADA Sink 30","category":"Sink","cabinet_type":"ADA Sink","default_width":30,"default_height":34.5,"default_depth":21,"minimum_width":30,"maximum_width":48,"width_increment":3,"door_count":0,"drawer_count":0,"shelf_count":0,"toe_kick":0,"construction_type":"Project Default","notes":"Accessible knee-space sink base"},{"code":"V24","name":"Vanity 24","category":"Vanity","cabinet_type":"Base","default_width":24,"default_height":34.5,"default_depth":21,"minimum_width":18,"maximum_width":48,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":1,"toe_kick":4,"construction_type":"Project Default","notes":"Standard vanity base"},{"code":"BCB36","name":"Pie-Cut Corner Base","category":"Corner","cabinet_type":"Pie-Cut Corner Base","default_width":36,"default_height":34.5,"default_depth":36,"minimum_width":36,"maximum_width":36,"width_increment":1,"door_count":1,"drawer_count":0,"shelf_count":1,"toe_kick":4,"construction_type":"Project Default","notes":"36 x 36 pie-cut corner"},{"code":"BDC36","name":"Diagonal Corner Base","category":"Corner","cabinet_type":"Diagonal Corner Base","default_width":36,"default_height":34.5,"default_depth":36,"minimum_width":36,"maximum_width":36,"width_increment":1,"door_count":1,"drawer_count":0,"shelf_count":1,"toe_kick":4,"construction_type":"Project Default","notes":"Diagonal-front corner"},{"code":"BBC42","name":"Blind Corner Base","category":"Corner","cabinet_type":"Blind Corner Base","default_width":42,"default_height":34.5,"default_depth":24,"minimum_width":39,"maximum_width":48,"width_increment":3,"door_count":1,"drawer_count":0,"shelf_count":1,"toe_kick":4,"construction_type":"Project Default","notes":"Blind corner base"},{"code":"TC15","name":"Trash Pull-Out 15","category":"Accessories","cabinet_type":"Trash Can","default_width":15,"default_height":34.5,"default_depth":24,"minimum_width":15,"maximum_width":24,"width_increment":3,"door_count":0,"drawer_count":1,"shelf_count":0,"toe_kick":4,"construction_type":"Project Default","notes":"Full-height pull-out front"},{"code":"CUB24","name":"Cubbies 24","category":"Accessories","cabinet_type":"Cubbies","default_width":24,"default_height":48,"default_depth":24,"minimum_width":12,"maximum_width":48,"width_increment":3,"door_count":0,"drawer_count":0,"shelf_count":3,"toe_kick":4,"construction_type":"Project Default","notes":"Open cubby storage"}];
+            const EMBEDDED_CATALOG_FALLBACK = [{"code":"B12","name":"Base 12","category":"Base","cabinet_type":"Base","default_width":12,"default_height":34.5,"default_depth":24,"minimum_width":9,"maximum_width":21,"width_increment":3,"door_count":1,"drawer_count":1,"shelf_count":1,"toe_kick":4,"construction_type":"Project Default","notes":"Single-door base"},{"code":"B24","name":"Base 24","category":"Base","cabinet_type":"Base","default_width":24,"default_height":34.5,"default_depth":24,"minimum_width":24,"maximum_width":36,"width_increment":3,"door_count":2,"drawer_count":1,"shelf_count":1,"toe_kick":4,"construction_type":"Project Default","notes":"Standard base cabinet"},{"code":"B36","name":"Base 36","category":"Base","cabinet_type":"Base","default_width":36,"default_height":34.5,"default_depth":24,"minimum_width":36,"maximum_width":48,"width_increment":3,"door_count":2,"drawer_count":1,"shelf_count":1,"toe_kick":4,"construction_type":"Project Default","notes":"Wide base cabinet"},{"code":"DB24","name":"Drawer Base 24","category":"Base","cabinet_type":"Base","default_width":24,"default_height":34.5,"default_depth":24,"minimum_width":12,"maximum_width":36,"width_increment":3,"door_count":0,"drawer_count":3,"shelf_count":0,"toe_kick":4,"construction_type":"Project Default","notes":"Three-drawer base"},{"code":"W3018","name":"Wall 30 High x 18 Wide","category":"Wall","cabinet_type":"Wall","default_width":18,"default_height":30,"default_depth":12,"minimum_width":9,"maximum_width":24,"width_increment":3,"door_count":1,"drawer_count":0,"shelf_count":2,"toe_kick":0,"construction_type":"Project Default","notes":"Standard 30-inch-high wall cabinet"},{"code":"W3030","name":"Wall 30 High x 30 Wide","category":"Wall","cabinet_type":"Wall","default_width":30,"default_height":30,"default_depth":12,"minimum_width":24,"maximum_width":36,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":2,"toe_kick":0,"construction_type":"Project Default","notes":"Double-door wall cabinet"},{"code":"W3642","name":"Wall 36 High x 42 Wide","category":"Wall","cabinet_type":"Wall","default_width":42,"default_height":36,"default_depth":12,"minimum_width":36,"maximum_width":48,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":3,"toe_kick":0,"construction_type":"Project Default","notes":"Wide wall cabinet"},{"code":"T2484","name":"Tall Utility 24 x 84","category":"Tall","cabinet_type":"Tall","default_width":24,"default_height":84,"default_depth":24,"minimum_width":18,"maximum_width":36,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":5,"toe_kick":4,"construction_type":"Project Default","notes":"Full-height utility cabinet"},{"code":"P2484","name":"Tall Pantry","category":"Pantry","cabinet_type":"Tall","default_width":24,"default_height":84,"default_depth":24,"minimum_width":18,"maximum_width":36,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":5,"toe_kick":4,"construction_type":"Project Default","notes":"Standard pantry"},{"code":"SB30","name":"Sink Base 30","category":"Sink","cabinet_type":"Sink Base","default_width":30,"default_height":34.5,"default_depth":24,"minimum_width":24,"maximum_width":48,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":0,"toe_kick":4,"construction_type":"Project Default","notes":"False-front sink base"},{"code":"10580","name":"ADA Wall Sink Cabinet","category":"Wall Cabinets","cabinet_type":"ADA Sink","default_width":36,"default_height":32,"default_depth":24,"minimum_width":30,"maximum_width":48,"width_increment":1,"allowed_depths":[24,29],"allowed_material_thicknesses":[0.5,0.625,0.75],"door_count":0,"drawer_count":0,"shelf_count":0,"toe_kick":0,"construction_type":"Frameless","front_rail_height":5,"mount_rail_height":4,"access_panel_type":"Magnetic","notes":"Wall-mounted ADA lavatory cabinet with open top, bottom, and back; removable access panel"},{"code":"V24","name":"Vanity 24","category":"Vanity","cabinet_type":"Base","default_width":24,"default_height":34.5,"default_depth":21,"minimum_width":18,"maximum_width":48,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":1,"toe_kick":4,"construction_type":"Project Default","notes":"Standard vanity base"},{"code":"BCB36","name":"Pie-Cut Corner Base","category":"Corner","cabinet_type":"Pie-Cut Corner Base","default_width":36,"default_height":34.5,"default_depth":36,"minimum_width":36,"maximum_width":36,"width_increment":1,"door_count":1,"drawer_count":0,"shelf_count":1,"toe_kick":4,"construction_type":"Project Default","notes":"36 x 36 pie-cut corner"},{"code":"BDC36","name":"Diagonal Corner Base","category":"Corner","cabinet_type":"Diagonal Corner Base","default_width":36,"default_height":34.5,"default_depth":36,"minimum_width":36,"maximum_width":36,"width_increment":1,"door_count":1,"drawer_count":0,"shelf_count":1,"toe_kick":4,"construction_type":"Project Default","notes":"Diagonal-front corner"},{"code":"BBC42","name":"Blind Corner Base","category":"Corner","cabinet_type":"Blind Corner Base","default_width":42,"default_height":34.5,"default_depth":24,"minimum_width":39,"maximum_width":48,"width_increment":3,"door_count":1,"drawer_count":0,"shelf_count":1,"toe_kick":4,"construction_type":"Project Default","notes":"Blind corner base"},{"code":"TC15","name":"Trash Pull-Out 15","category":"Accessories","cabinet_type":"Trash Can","default_width":15,"default_height":34.5,"default_depth":24,"minimum_width":15,"maximum_width":24,"width_increment":3,"door_count":0,"drawer_count":1,"shelf_count":0,"toe_kick":4,"construction_type":"Project Default","notes":"Full-height pull-out front"},{"code":"CUB24","name":"Cubbies 24","category":"Accessories","cabinet_type":"Cubbies","default_width":24,"default_height":48,"default_depth":24,"minimum_width":12,"maximum_width":48,"width_increment":3,"door_count":0,"drawer_count":0,"shelf_count":3,"toe_kick":4,"construction_type":"Project Default","notes":"Open cubby storage"}];
 
             let EDIT_TARGET_PID = null;
             let CATALOG = [];
@@ -128,7 +128,7 @@
               "Wall": [30, 36, 42],
               "Tall": [84, 90, 96],
               "Sink Base": [34.5],
-              "ADA Sink": [34.5],
+              "ADA Sink": [32],
               "Cubbies": [24, 30, 36, 42, 48, 60, 72, 84, 90]
             };
 
@@ -298,8 +298,10 @@
                 $("use_slides").checked = true;
               }
 
-              ["false_front_height_in","countertop_thk_in","ada_knee_clear_h_in","ada_apron_h_in","ada_knee_depth_in","ada_side_leg_depth_in"]
-                .forEach(id => $(id).disabled = !isSink);
+              ["false_front_height_in","countertop_thk_in"]
+                .forEach(id => { if ($(id)) $(id).disabled = !isSink || isADA; });
+              ["ada_knee_clear_h_in","front_rail_height_in","mount_rail_height_in","access_panel_type","fastener_type","mounting_type","second_mount_rail","safety_tether"]
+                .forEach(id => { if ($(id)) $(id).disabled = !isADA; });
 
               // Toe-kick controls: only allowed for certain cabinet types.
               // This is strictly a UI/preview rule; Ruby-side geometry enforces the same.
@@ -598,7 +600,7 @@ function updateCubbiesAuto(){
                 "Wall": "Wall Cabinet",
                 "Tall": "Tall Cabinet",
                 "Sink Base": "Sink Base Cabinet",
-                "ADA Sink": "ADA Sink Cabinet",
+                "ADA Sink": "ADA Wall Sink Cabinet",
                 "Trash Can": "Trash Pull-Out Cabinet",
                 "Cubbies": "Cubby Cabinet",
                 "Appliance End Panel": "Appliance End Panel",
@@ -684,9 +686,21 @@ if (type === "Base" && dc >= 2) {
               if (Number.isNaN(D) || D <= 0) issues.push("Depth must be > 0.");
               if (Number.isNaN(H) || H <= 0) issues.push("Height must be > 0.");
 
-              if (isSink) {
+              if (isSink && !isADA) {
                 if (Number.isNaN(ct) || ct <= 0) issues.push("Countertop thickness must be > 0.");
                 if (!Number.isNaN(H) && !Number.isNaN(ct) && H <= ct) issues.push("Finished height must exceed countertop thickness.");
+              }
+
+              if (isADA) {
+                const frontRail = num("front_rail_height_in", 5);
+                if (W < 30 || W > 48) issues.push("Model 10580 width must be between 30\" and 48\".");
+                if (Math.abs(H - 32) > 0.001) issues.push("Model 10580 height is fixed at 32\".");
+                if (![24, 29].some(value => Math.abs(D - value) < 0.001)) issues.push("Model 10580 depth must be 24\" or 29\".");
+                if (![0.5, 0.625, 0.75].some(value => Math.abs(num("panel_thk_in", 0) - value) < 0.001)) issues.push("Material thickness must be 1/2\", 5/8\", or 3/4\".");
+                if (frontRail < 4 || frontRail > 6) issues.push("Front rail height must be between 4\" and 6\".");
+                if ((W - 2 * num("panel_thk_in", 0.75)) < 30) issues.push("Clear knee width must be at least 30\".");
+                if ((H - frontRail) < 27) issues.push("Clear knee height must be at least 27\".");
+                if (W > 42 && !$("second_mount_rail")?.checked) warnings.push("Widths over 42\" should use a second rear rail or concealed steel reinforcement.");
               }
 
               if (!isADA) {
@@ -1417,6 +1431,14 @@ function gather(){
                 ada_apron_h_in: num("ada_apron_h_in", 3.0),
                 ada_knee_depth_in: num("ada_knee_depth_in", 20.0),
                 ada_side_leg_depth_in: num("ada_side_leg_depth_in", 6.0),
+                front_rail_height_in: num("front_rail_height_in", 5.0),
+                mount_rail_height_in: num("mount_rail_height_in", 4.0),
+                access_panel_type: $("access_panel_type")?.value || "Magnetic",
+                fastener_type: $("fastener_type")?.value || "Confirmat",
+                mounting_type: $("mounting_type")?.value || "Wall Rail",
+                french_cleat: ($("mounting_type")?.value === "French Cleat"),
+                second_mount_rail: !!$("second_mount_rail")?.checked,
+                safety_tether: !!$("safety_tether")?.checked,
                 // Materials/tags omitted (UI section removed)
                 edit_target_pid: EDIT_TARGET_PID
               };
@@ -1635,6 +1657,13 @@ function gather(){
               $("ada_apron_h_in").value = d.ada_apron_h_in;
               $("ada_knee_depth_in").value = d.ada_knee_depth_in;
               $("ada_side_leg_depth_in").value = d.ada_side_leg_depth_in;
+              if ($("front_rail_height_in")) $("front_rail_height_in").value = d.front_rail_height_in ?? 5;
+              if ($("mount_rail_height_in")) $("mount_rail_height_in").value = d.mount_rail_height_in ?? 4;
+              if ($("access_panel_type")) $("access_panel_type").value = d.access_panel_type || "Magnetic";
+              if ($("fastener_type")) $("fastener_type").value = d.fastener_type || "Confirmat";
+              if ($("mounting_type")) $("mounting_type").value = d.mounting_type || (d.french_cleat ? "French Cleat" : "Wall Rail");
+              if ($("second_mount_rail")) $("second_mount_rail").checked = !!d.second_mount_rail;
+              if ($("safety_tether")) $("safety_tether").checked = !!d.safety_tether;
 
               const re = parseFloat($("reveal_edge_in").value);
               if (Number.isFinite(re) && re > 0) lastRevealEdge = re;
