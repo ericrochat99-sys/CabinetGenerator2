@@ -1,3 +1,20 @@
 [
-  {"code":"V24","name":"Vanity 24","category":"Vanity","cabinet_type":"Base","default_width":24,"default_height":34.5,"default_depth":21,"minimum_width":18,"maximum_width":48,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":1,"toe_kick":4.5,"construction_type":"Project Default","notes":"Standard vanity base"}
+  {
+    "code": "V24",
+    "name": "Vanity 24",
+    "category": "Vanity",
+    "cabinet_type": "Base",
+    "default_width": 24,
+    "default_height": 34.5,
+    "default_depth": 21,
+    "minimum_width": 18,
+    "maximum_width": 48,
+    "width_increment": 3,
+    "door_count": 2,
+    "drawer_count": 0,
+    "shelf_count": 1,
+    "toe_kick": 4,
+    "construction_type": "Project Default",
+    "notes": "Standard vanity base"
+  }
 ]
