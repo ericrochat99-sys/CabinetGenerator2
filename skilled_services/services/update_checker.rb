@@ -33,7 +33,7 @@ module SkilledServices
 
           process_release(release, manual)
         rescue NoReleaseError
-          ::UI.messagebox("No Skilled Services releases have been published yet.") if manual
+          ::UI.messagebox("No ForgeCase releases have been published yet.") if manual
         rescue StandardError => callback_error
           if manual
             ::UI.messagebox("Unable to check for updates.\n\n#{callback_error.message}")
@@ -56,7 +56,7 @@ module SkilledServices
       if (latest_version <=> installed_version) == 1
         show_update_available(release)
       elsif manual
-        ::UI.messagebox("Skilled Services is up to date (version #{SkilledServices::VERSION}).")
+        ::UI.messagebox("ForgeCase is up to date (version #{SkilledServices::VERSION}).")
       end
     end
 
@@ -70,7 +70,7 @@ module SkilledServices
       request = Sketchup::Http::Request.new(RELEASE_API_URL, Sketchup::Http::GET)
       request.headers = {
         "Accept" => "application/vnd.github+json",
-        "User-Agent" => "SkilledServices-SketchUp/#{SkilledServices::VERSION}",
+        "User-Agent" => "ForgeCase-SketchUp/#{SkilledServices::VERSION}",
         "X-GitHub-Api-Version" => "2022-11-28"
       }
 
@@ -105,7 +105,7 @@ module SkilledServices
       tag = release.fetch("tag_name").to_s.sub(/\Av/, "")
       release_url = trusted_release_url(release.fetch("html_url"))
       message = <<~MESSAGE
-        Skilled Services #{tag} is available.
+        ForgeCase #{tag} is available.
 
         Installed version: #{SkilledServices::VERSION}
 
