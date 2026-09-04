@@ -44,7 +44,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: skilled-services-rbz
+          name: forgecase-rbz
           path: dist/*.rbz
 
       - name: Confirm release tag matches VERSION
