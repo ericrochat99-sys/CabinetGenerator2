@@ -1,6 +1,7 @@
             function $(id){ return document.getElementById(id); }
 
             const EMBED_DEFAULTS_JSON = {{EMBED_DEFAULTS_JSON}};
+            const EMBED_CATALOG_JSON = {{EMBED_CATALOG_JSON}};
 
             let EDIT_TARGET_PID = null;
             let CATALOG = [];
@@ -1648,6 +1649,9 @@ function gather(){
             };
 
             function bootstrapDialog(){
+              // The catalog is embedded in the initial HTML so it is available
+              // even when SketchUp's asynchronous ready callback is delayed.
+              try { initialize_catalog(EMBED_CATALOG_JSON, EMBED_DEFAULTS_JSON.catalog_code); } catch(error) { console.error("Catalog initialization failed", error); }
               // Populate first. A secondary control must never prevent core defaults.
               try { if (window.set_form) window.set_form(EMBED_DEFAULTS_JSON); } catch(error) { console.error("Default initialization failed", error); }
               try { wireEvents(); } catch(error) { console.error("Event initialization failed", error); }
