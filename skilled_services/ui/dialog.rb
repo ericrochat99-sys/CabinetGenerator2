@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "base64"
+
 module SkilledServices
   module DialogTemplate
     TEMPLATE_ROOT = __dir__.freeze
@@ -15,6 +17,10 @@ module SkilledServices
       script_name = base_name == "index" ? "app.js" : "#{base_name}.js"
       html.sub!("{{STYLES}}") { read_asset(css_name) }
       html.sub!("{{SCRIPT}}") { read_asset(script_name) }
+      if html.include?("{{BRAND_MARK_DATA_URI}}")
+        mark = File.binread(File.join(TEMPLATE_ROOT, "assets", "forgecase-mark.png"))
+        html.gsub!("{{BRAND_MARK_DATA_URI}}") { "data:image/png;base64,#{Base64.strict_encode64(mark)}" }
+      end
 
       replacements.each do |key, value|
         html.gsub!("{{#{key}}}") { value.to_s }
