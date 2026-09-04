@@ -2,6 +2,13 @@
 
 All notable changes to this extension are documented here.
 
+## [2.0.5] - 2026-09-04
+
+### Fixed
+
+- Corrected dialog asset injection so Ruby no longer interprets JavaScript backslashes as replacement-string escapes.
+- Restored all cabinet-dialog JavaScript behavior, including placement, editing, resets, catalog controls, preview updates, and SketchUp callbacks.
+
 ## [2.0.4] - 2026-09-04
 
 ### Fixed
