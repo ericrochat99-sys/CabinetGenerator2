@@ -1,14 +1,1 @@
-body { font-family: Arial, sans-serif; margin: 14px; }
-h2 { margin: 0 0 10px 0; font-size: 16px; }
-details.section { margin-top: 14px; padding-top: 10px; border-top: 1px solid #ddd; }
-details.section > summary { cursor: pointer; font-weight: 700; list-style: none; }
-details.section > summary::-webkit-details-marker { display:none; }
-details.section > summary:before { content: "▸"; display:inline-block; width: 1.2em; }
-details.section[open] > summary:before { content: "▾"; }
-.row { margin: 10px 0; }
-label { display:block; font-size: 12px; margin-bottom: 4px; }
-input[type="number"], input[type="text"] { width: 100%; padding: 7px; border: 1px solid #bbb; border-radius: 6px; }
-input[type="checkbox"] { transform: scale(1.1); }
-.actions { display:flex; gap:10px; flex-wrap:wrap; margin-top: 16px; }
-button { padding: 9px 12px; border: 1px solid #888; background:#f4f4f4; border-radius: 8px; cursor: pointer; }
-button.primary { background:#2b6cb0; color:#fff; border-color:#2b6cb0; }
+:root{--black:#2D3036;--bronze:#A77747;--gray:#E9ECEF}*{box-sizing:border-box}body{font-family:Inter,"Source Sans Pro",Arial,sans-serif;margin:14px;color:var(--black)}.settings-brand{padding-bottom:9px;border-bottom:2px solid var(--black);font-family:Montserrat,"Arial Black",Arial,sans-serif;font-size:22px;font-weight:800;letter-spacing:1px}.settings-brand strong{color:var(--bronze)}h2{margin:12px 0 10px;font-size:16px}details.section{margin-top:10px;border:1px solid #cfd3d7}details.section>summary{padding:9px 10px;background:#f7f8f8;border-left:3px solid var(--bronze);cursor:pointer;font-weight:700;list-style:none}details.section>summary::-webkit-details-marker{display:none}details.section>summary:before{content:"▸";display:inline-block;width:1.2em;color:var(--bronze)}details.section[open]>summary:before{content:"▾"}.row{margin:10px}label{display:block;margin-bottom:4px;font-size:11px;font-weight:600}input[type=number],input[type=text],select{width:100%;padding:7px;border:1px solid #b8bdc2;border-radius:2px}input:focus,select:focus{outline:2px solid rgba(167,119,71,.22);border-color:var(--bronze)}input[type=checkbox]{transform:scale(1.1);accent-color:var(--bronze)}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}button{padding:9px 12px;color:var(--black);background:var(--gray);border:1px solid transparent;border-radius:2px;cursor:pointer}button.primary{color:#fff;background:var(--bronze)}
