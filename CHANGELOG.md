@@ -2,6 +2,15 @@
 
 All notable changes to this extension are documented here.
 
+## [2.1.1] - 2026-09-04
+
+### Changed
+
+- Applied the ForgeCase Brand Guide v1.0 across the cabinet generator, global settings, and reports.
+- Added the ForgeCase mark and a branded header with the Commercial Casework Solutions descriptor and Built for What’s Next tagline.
+- Adopted Forge Black, Forge Bronze, white, and light gray with square controls, thin rules, and architectural styling.
+- Added the brand guide to the repository for future product and interface work.
+
 ## [2.1.0] - 2026-09-04
 
 ### Changed
