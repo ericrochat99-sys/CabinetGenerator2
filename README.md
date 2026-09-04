@@ -1,4 +1,4 @@
-# Skilled Services – Euro Cabinet Generator
+# ForgeCase
 
 A SketchUp extension for creating configurable European-style cabinets from a JSON catalog, adding countertops, producing shop-drawing scenes, and generating production reports.
 
@@ -10,11 +10,11 @@ A SketchUp extension for creating configurable European-style cabinets from a JS
 
 ## Installation
 
-1. Download the latest `skilled-services-<version>.rbz` from the [Releases page](https://github.com/ericrochat99-sys/CabinetGenerator2/releases/latest).
+1. Download the latest `forgecase-<version>.rbz` from the [Releases page](https://github.com/ericrochat99-sys/CabinetGenerator2/releases/latest).
 2. In SketchUp, open **Extensions → Extension Manager**.
 3. Choose **Install Extension**.
 4. Select the downloaded `.rbz` file and approve the installation.
-5. Open **Extensions → Euro Cabinet Generator** to use the extension.
+5. Open **Extensions → ForgeCase** to use the extension.
 
 ## Project structure
 
@@ -27,7 +27,7 @@ A SketchUp extension for creating configurable European-style cabinets from a JS
 - `skilled_services/version.rb` is the authoritative version source.
 - `scripts/build_rbz.rb` builds a deterministic installable package.
 
-All extension Ruby objects are namespaced under `SkilledServices`.
+ForgeCase retains its legacy internal Ruby namespace for upgrade compatibility.
 
 ## Development and build
 
@@ -37,10 +37,10 @@ Validate Ruby syntax and build from the repository root:
 ruby -c skilled_services.rb
 find skilled_services -name "*.rb" -print0 | xargs -0 -n1 ruby -c
 ruby scripts/build_rbz.rb
-unzip -t dist/skilled-services-1.1.0.rbz
+unzip -t dist/forgecase-1.1.0.rbz
 ```
 
-The builder stages only runtime files, validates required paths, rejects development or secret-like filenames, and writes `dist/skilled-services-<version>.rbz` without a parent directory.
+The builder stages only runtime files, validates required paths, rejects development or secret-like filenames, and writes `dist/forgecase-<version>.rbz` without a parent directory.
 
 ## Releases
 
@@ -48,4 +48,4 @@ Update `SkilledServices::VERSION` using semantic versioning and add the release 
 
 ## Update checks
 
-The extension checks the latest public GitHub Release once per day after SketchUp starts. You can also run **Extensions → Euro Cabinet Generator → Check for Updates…** at any time. When a newer semantic version is available, the extension offers to open the trusted GitHub release page. Installation remains user-controlled through SketchUp Extension Manager; the updater never downloads or executes remote Ruby code.
+The extension checks the latest public GitHub Release once per day after SketchUp starts. You can also run **Extensions → ForgeCase → Check for Updates…** at any time. When a newer semantic version is available, the extension offers to open the trusted GitHub release page. Installation remains user-controlled through SketchUp Extension Manager; the updater never downloads or executes remote Ruby code.
