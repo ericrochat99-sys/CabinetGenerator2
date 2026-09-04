@@ -2,6 +2,14 @@
 
 All notable changes to this extension are documented here.
 
+## [2.1.2] - 2026-09-04
+
+### Added
+
+- Added one-click in-app updates from the trusted ForgeCase GitHub release asset.
+- The updater validates the release filename, download URL, byte count, and ZIP signature before installation.
+- ForgeCase now installs the RBZ through SketchUp and hot-reloads the extension when safe, requesting a restart only if live reload fails.
+
 ## [2.1.1] - 2026-09-04
 
 ### Changed
