@@ -2,6 +2,14 @@
 
 All notable changes to this extension are documented here.
 
+## [2.0.4] - 2026-09-04
+
+### Fixed
+
+- Wired the Place Cabinet action before optional catalog and preview controls so secondary initialization errors cannot disable placement.
+- Added visible placement error feedback when the SketchUp callback bridge is unavailable or the request fails.
+- Loaded all 17 packaged cabinet models immediately so catalog search, category filtering, favorites, recent models, and model selection do not depend on the delayed ready callback.
+
 ## [2.0.3] - 2026-09-03
 
 ### Fixed
