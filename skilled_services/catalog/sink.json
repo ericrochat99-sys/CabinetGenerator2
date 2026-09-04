@@ -18,21 +18,33 @@
     "notes": "False-front sink base"
   },
   {
-    "code": "ADA30",
-    "name": "ADA Sink 30",
-    "category": "Sink",
+    "code": "10580",
+    "name": "ADA Wall Sink Cabinet",
+    "category": "Wall Cabinets",
     "cabinet_type": "ADA Sink",
-    "default_width": 30,
-    "default_height": 34.5,
-    "default_depth": 21,
+    "default_width": 36,
+    "default_height": 32,
+    "default_depth": 24,
     "minimum_width": 30,
     "maximum_width": 48,
-    "width_increment": 3,
+    "width_increment": 1,
+    "allowed_depths": [
+      24,
+      29
+    ],
+    "allowed_material_thicknesses": [
+      0.5,
+      0.625,
+      0.75
+    ],
     "door_count": 0,
     "drawer_count": 0,
     "shelf_count": 0,
     "toe_kick": 0,
-    "construction_type": "Project Default",
-    "notes": "Accessible knee-space sink base"
+    "construction_type": "Frameless",
+    "front_rail_height": 5,
+    "mount_rail_height": 4,
+    "access_panel_type": "Magnetic",
+    "notes": "Wall-mounted ADA lavatory cabinet with open top, bottom, and back; removable access panel"
   }
 ]
