@@ -9,6 +9,35 @@ module SkilledServices
       ROOT = File.expand_path(__dir__).freeze
       FILES = %w[base wall tall pantry sink vanity corner accessories].freeze
 
+      # Full ForgeCase item numbers use CODE-H/D/W. Accept the typographic dash
+      # produced by the dialog as well as keyboard-friendly hyphens/underscores.
+      MODEL_NUMBER_PATTERN = /\A([A-Z][A-Z0-9]*?)(P?)[\u2013\u2014\-_](\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\z/i.freeze
+      MODEL_FAMILIES = {
+        "B10" => ["Base", 0, 0, 1],
+        "B14" => ["Base", 0, 0, 1],
+        "B60" => ["Base", 0, 0, 1],
+        "B12" => ["Base", 1, 2, 1],
+        "B64" => ["Base", 1, 2, 1],
+        "D30" => ["Base", 3, 0, 0],
+        "D40" => ["Base", 4, 0, 0],
+        "D50" => ["Base", 5, 0, 0],
+        "SB60" => ["Sink Base", 0, 2, 0],
+        "SB64" => ["Sink Base", 0, 2, 0],
+        "KB00" => ["ADA Sink", 0, 0, 0],
+        "KB10" => ["ADA Sink", 0, 0, 0],
+        "BCB" => ["Pie-Cut Corner Base", 0, 1, 1],
+        "BDC" => ["Diagonal Corner Base", 0, 1, 1],
+        "W10" => ["Wall", 0, 1, 2],
+        "W12" => ["Wall", 0, 2, 2],
+        "WCB" => ["Wall", 0, 1, 1],
+        "WDC" => ["Wall", 0, 1, 1],
+        "WO" => ["Wall", 0, 0, 2],
+        "T10" => ["Tall", 0, 1, 5],
+        "T12" => ["Tall", 0, 2, 5],
+        "TU" => ["Tall", 0, 2, 5],
+        "TUL" => ["Tall", 0, 2, 5]
+      }.freeze
+
       module_function
 
       def all
@@ -30,7 +59,7 @@ module SkilledServices
 
       def placement_params(code)
         item = find(code)
-        return nil unless item
+        return model_number_params(code) unless item
 
         {
           catalog_code: item["code"],
@@ -49,6 +78,38 @@ module SkilledServices
           construction_type: item["construction_type"],
           notes: item["notes"]
         }.reject { |_key, value| value.nil? }
+      end
+
+      def model_number_params(value)
+        match = MODEL_NUMBER_PATTERN.match(value.to_s.strip.upcase)
+        return nil unless match
+
+        family_code = match[1]
+        partitioned = !match[2].to_s.empty?
+        family = MODEL_FAMILIES[family_code]
+        return nil unless family
+
+        cabinet_type, drawer_count, door_count, shelf_count = family
+        height = match[3].to_f
+        depth = match[4].to_f
+        width = match[5].to_f
+        # Base-family item numbers store carcass height; the dialog stores the
+        # finished cabinet/counter height used by the model-number generator.
+        height = 34.5 if %w[Base Sink\ Base ADA\ Sink].include?(cabinet_type) && (height - 32.0).abs < 0.001
+        height = 26.5 if %w[Base Sink\ Base ADA\ Sink].include?(cabinet_type) && (height - 24.0).abs < 0.001
+
+        {
+          catalog_code: "#{family_code}#{partitioned ? 'P' : ''}",
+          cabinet_type: cabinet_type,
+          width_in: width,
+          height_in: height,
+          depth_in: depth,
+          drawer_count: drawer_count,
+          door_count: door_count,
+          show_doors: door_count.positive?,
+          shelf_count: shelf_count,
+          partition_count: partitioned ? 1 : 0
+        }
       end
 
       def reload!
