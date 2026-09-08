@@ -1931,6 +1931,12 @@ when "hinge"
         base[:drawer_count] = 0
         base[:use_slides] = false
         base[:show_doors] = false
+        base[:add_wire_pulls] = false
+        base[:add_hinges] = false
+        base[:add_door_bumpers] = false
+        base[:add_shelf_supports] = false
+        base[:add_cam_lock] = false
+        base[:add_countertop_brackets] = false
         base[:false_front_height_in] = 6.0
         base[:shelf_count] = 0
         base[:back_thk_in] = 0.0
@@ -2051,6 +2057,12 @@ when "hinge"
         merged[:drawer_count] = 0
         merged[:show_doors] = false
         merged[:top_mode] = "Open Top"
+        merged[:add_wire_pulls] = false
+        merged[:add_hinges] = false
+        merged[:add_door_bumpers] = false
+        merged[:add_shelf_supports] = false
+        merged[:add_cam_lock] = false
+        merged[:add_countertop_brackets] = false
       end
 
       merged
@@ -2074,6 +2086,12 @@ when "hinge"
         merged[:drawer_count] = 0
         merged[:show_doors] = false
         merged[:top_mode] = "Open Top"
+        merged[:add_wire_pulls] = false
+        merged[:add_hinges] = false
+        merged[:add_door_bumpers] = false
+        merged[:add_shelf_supports] = false
+        merged[:add_cam_lock] = false
+        merged[:add_countertop_brackets] = false
       end
       merged
     end
@@ -2374,6 +2392,18 @@ when "hinge"
       add_countertop_brackets= (params.key?(:add_countertop_brackets)? !!params[:add_countertop_brackets]: true)
       add_file_drawer_hw     = (params.key?(:add_file_drawer_hardware) ? !!params[:add_file_drawer_hardware] : true)
       file_drawer_min_front_h = (params[:file_drawer_min_front_h_in] || 9.0).to_f
+
+      if is_ada_sink
+        # ADA front hardware is represented by the concealed mounting metadata
+        # on the removable apron/panels. Do not generate standard cabinet
+        # hardware or the exposed 21x21 countertop brackets.
+        add_wire_pulls = false
+        add_hinges = false
+        add_door_bumpers = false
+        add_shelf_supports = false
+        add_cam_lock = false
+        add_countertop_brackets = false
+      end
 
       # Not generated (per requirements), retained for schema compatibility.
       mat_countertop = ensure_material(model, params[:mat_countertop] || "MAT_Countertop", [180, 180, 180], ocl_type: :sheet_goods)
@@ -3328,10 +3358,8 @@ end
         apron.set_attribute("skservices_panel", "edge_treatment", "finished; beveled bottom edge")
 
         access_panel_thk = in_to_length(0.5)
-        # Recess the panel face by its thickness so the finished front surface,
-        # not merely the construction line, remains outside the clear envelope.
-        panel_top_y = d - ada_knee_depth_at_27 - access_panel_thk
-        panel_bottom_y = d - ada_knee_depth - access_panel_thk
+        panel_top_y = d - ada_knee_depth_at_27
+        panel_bottom_y = d - ada_knee_depth
         panel_bottom_z = ada_toe_clear_h
         panel_gap = [reveal_center, in_to_length(0.125)].max
         panel_total_w = w - (2.0 * reveal_edge) - panel_gap
@@ -3342,15 +3370,28 @@ end
           panel = fe.add_group
           panel.name = "Removable ADA Access Panel - #{label}"
           panel.layer = tag_doors
-          points = [
+          front_points = [
             Geom::Point3d.new(panel_x, panel_top_y, apron_bottom_z),
             Geom::Point3d.new(panel_x + panel_width, panel_top_y, apron_bottom_z),
             Geom::Point3d.new(panel_x + panel_width, panel_bottom_y, panel_bottom_z),
             Geom::Point3d.new(panel_x, panel_bottom_y, panel_bottom_z)
           ]
-          face = panel.entities.add_face(points)
-          raise "Failed to create ADA access panel" unless face && face.valid?
-          face.pushpull(access_panel_thk)
+          back_points = front_points.map { |point| Geom::Point3d.new(point.x, point.y - access_panel_thk, point.z) }
+          faces = []
+          faces << panel.entities.add_face(front_points)
+          faces << panel.entities.add_face(back_points.reverse)
+          4.times do |index|
+            next_index = (index + 1) % 4
+            faces << panel.entities.add_face([
+              front_points[index], front_points[next_index],
+              back_points[next_index], back_points[index]
+            ])
+          end
+          raise "Failed to create ADA access panel" unless faces.compact.all?(&:valid?)
+          faces.compact.each do |surface|
+            surface.material = mat_fronts if mat_fronts
+            surface.back_material = mat_fronts if mat_fronts
+          end
           panel.material = mat_fronts if mat_fronts
           panel.set_attribute("skservices_panel", "removable", true)
           panel.set_attribute("skservices_panel", "mounting", "concealed positive mechanical clips")
