@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.5] - 2026-09-08
+
+- Rebuilt the ADA Sink as a wall-mounted lavatory cabinet with a 34-inch maximum height and a 36-by-24-inch default size.
+- Removed the fixed floor, full-height back, shelves, partitions, full top, and erroneous 10-inch elevation offset from ADA geometry.
+- Added upper finished end panels, a continuous 2-inch front support, an upper rear mounting rail, a removable beveled apron, and symmetrical removable access panels.
+- Added enforced ANSI/ADA knee, toe, clear-depth, width, and front-obstruction limits plus model metadata for field verification and plumbing protection.
+
 ## [2.1.4] - 2026-09-08
 
 - Fixed Cabinet Catalog selection so clicking an already-selected model reloads all of its parameters.

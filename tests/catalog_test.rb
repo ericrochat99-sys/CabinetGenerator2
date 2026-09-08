@@ -40,6 +40,16 @@ class CatalogTest < Minitest::Test
     assert_nil SkilledServices::Catalog::Loader.placement_params("W12-nope")
   end
 
+  def test_ada_lavatory_catalog_defaults
+    actual = SkilledServices::Catalog::Loader.placement_params("ADA30")
+    assert_equal "ADA Sink", actual[:cabinet_type]
+    assert_equal 36, actual[:width_in]
+    assert_equal 34, actual[:height_in]
+    assert_equal 24, actual[:depth_in]
+    assert_equal 0, actual[:shelf_count]
+    refute actual[:show_doors]
+  end
+
   private
 
   def assert_defaults(code, expected)
