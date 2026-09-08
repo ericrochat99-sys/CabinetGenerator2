@@ -1835,7 +1835,10 @@ when "hinge"
         ada_knee_clear_h_in: 27.0,
         ada_apron_h_in: 3.0,
         ada_knee_depth_in: 20.0, # within 17–25
-        ada_side_leg_depth_in: 6.0, # front "leg" depth support
+        ada_side_leg_depth_in: 6.0, # maximum front obstruction (legacy key)
+        ada_knee_depth_at_27_in: 8.0,
+        ada_toe_clear_h_in: 9.0,
+        ada_toe_additional_depth_in: 11.0,
 
         # materials/tags
         # materials/tags omitted (UI section removed)
@@ -1922,18 +1925,20 @@ when "hinge"
         base[:partition_count] = 0
         base[:countertop_thk_in] = 1.5
       when "ADA Sink"
-        base[:depth_in] = 21.0
-        base[:height_in] = 34.5 # finished top of vanity/counter
+        base[:width_in] = 36.0
+        base[:depth_in] = 24.0
+        base[:height_in] = 34.0 # maximum lavatory rim/surface height AFF
         base[:drawer_count] = 0
         base[:use_slides] = false
+        base[:show_doors] = false
         base[:false_front_height_in] = 6.0
         base[:shelf_count] = 0
-        base[:back_thk_in] = 0.5
+        base[:back_thk_in] = 0.0
         base[:partition_count] = 0
-        base[:countertop_thk_in] = 1.5
+        base[:countertop_thk_in] = 2.0
         base[:toe_height_in] = 0.0
         base[:toe_recess_in] = 0.0
-        base[:top_mode] = "Full Top"
+        base[:top_mode] = "Open Top"
       when "Appliance End Panel"
         base[:drawer_count] = 0
         base[:use_slides] = false
@@ -2035,6 +2040,19 @@ when "hinge"
         merged[:toe_recess_in] = defaults[:toe_recess_in] if merged[:toe_recess_in].to_f <= 0.0
       end
 
+      if type.to_s == "ADA Sink"
+        # Migrate unsafe values persisted by earlier releases.
+        merged[:width_in] = 36.0 if merged[:width_in].to_f < 30.0
+        merged[:height_in] = 34.0 if merged[:height_in].to_f > 34.0 || merged[:height_in].to_f <= 0.0
+        merged[:depth_in] = 24.0 if merged[:depth_in].to_f <= 0.0
+        merged[:back_thk_in] = 0.0
+        merged[:shelf_count] = 0
+        merged[:partition_count] = 0
+        merged[:drawer_count] = 0
+        merged[:show_doors] = false
+        merged[:top_mode] = "Open Top"
+      end
+
       merged
     end
 
@@ -2049,7 +2067,14 @@ when "hinge"
       else
         merged[:top_mode] = (merged[:base_top_mode] || defaults[:top_mode]).to_s
       end
-      merged[:back_thk_in] = 0.5 if type.to_s == "ADA Sink"
+      merged[:back_thk_in] = 0.0 if type.to_s == "ADA Sink"
+      if type.to_s == "ADA Sink"
+        merged[:shelf_count] = 0
+        merged[:partition_count] = 0
+        merged[:drawer_count] = 0
+        merged[:show_doors] = false
+        merged[:top_mode] = "Open Top"
+      end
       merged
     end
 
@@ -2231,6 +2256,9 @@ when "hinge"
       ada_apron_h      = in_to_length(params[:ada_apron_h_in])
       ada_knee_depth   = in_to_length(params[:ada_knee_depth_in])
       ada_leg_depth    = in_to_length(params[:ada_side_leg_depth_in])
+      ada_knee_depth_at_27 = in_to_length(params[:ada_knee_depth_at_27_in] || 8.0)
+      ada_toe_clear_h = in_to_length(params[:ada_toe_clear_h_in] || 9.0)
+      ada_toe_additional_depth = in_to_length(params[:ada_toe_additional_depth_in] || 11.0)
 
       # validation
       safe_positive!(w, "Width")
@@ -2255,8 +2283,10 @@ when "hinge"
       end
 
       # Countertop logic: finished_top_h is treated as cabinet height to top of cabinet (like other base cabinets).
-      build_countertop = false # preference: never generate countertop geom
-      has_countertop = build_countertop
+      build_countertop = false # preference: never generate countertop geometry
+      # ADA height is the finished lavatory surface height. Reserve the entered
+      # top thickness so the default 34-inch surface produces a 32-inch case.
+      has_countertop = is_ada_sink
       build_countertop = false # preference: never generate countertop geometry
       if has_countertop
         safe_positive!(countertop_thk, "Countertop thickness")
@@ -2280,11 +2310,25 @@ when "hinge"
       make_separate_toe = (use_toe && !(finish_left_end || finish_right_end))
 
       if is_ada_sink
+        raise ArgumentError, "ADA lavatory height must not exceed 34 inches AFF" if finished_top_h > in_to_length(34.0)
+        raise ArgumentError, "ADA cabinet width must be at least 30 inches" if w < in_to_length(30.0)
         safe_positive!(ada_knee_clear_h, "ADA knee clearance height")
         safe_positive!(ada_apron_h, "ADA apron height")
         safe_positive!(ada_knee_depth, "ADA knee depth")
         raise ArgumentError, "ADA knee depth must be between 17 and 25" if ada_knee_depth < 17.0 || ada_knee_depth > 25.0
-        ada_leg_depth = clamp(ada_leg_depth, 3.0, d)
+        raise ArgumentError, "ADA knee clearance must be at least 27 inches" if ada_knee_clear_h < in_to_length(27.0)
+        raise ArgumentError, "ADA knee depth at 27 inches AFF must be at least 8 inches" if ada_knee_depth_at_27 < in_to_length(8.0)
+        raise ArgumentError, "ADA toe clearance height must be at least 9 inches" if ada_toe_clear_h < in_to_length(9.0)
+        raise ArgumentError, "ADA additional toe depth must be at least 11 inches" if ada_toe_additional_depth < in_to_length(11.0)
+        if ada_knee_depth < (ada_knee_depth_at_27 + ada_toe_additional_depth)
+          raise ArgumentError, "ADA total clear depth must include knee depth plus additional toe depth"
+        end
+        raise ArgumentError, "ADA front obstruction must not exceed 6 inches" if ada_leg_depth > in_to_length(6.0)
+        shelves = 0
+        partition_count = 0
+        drawer_count = 0
+        show_doors = false
+        back_thk = 0.0
       end
 
       # Tags
@@ -2607,91 +2651,49 @@ end
       top_z   = spec.top_z
 
       # ----------------------------
-      # ADA Sink construction:
-      # - Open knee space (no bottom panel)
-      # - Raised upper side panels + front legs
-      # - Back: none by default
-      # - Apron: 3" tall sloped or recessed; bottom >= 27" AFF
-      # - Clear width: 30" min is user's responsibility; we do not auto-force width.
-      # - Knee depth: 17–25"
+      # ADA wall-mounted lavatory cabinet construction. All coordinates are AFF;
+      # no post-build elevation offset is applied.
       # ----------------------------
       if is_ada_sink
-        # ADA Sink (wedge-style) construction:
-        # - No legs/uprights: use full-height sides + back + top as primary structure
-        # - Open knee space (no bottom panel)
-        # - Removable wedge panel at the front
-        # NOTE: We still validate knee-clearance inputs, but we do not generate leg parts.
         knee_clear_z = ada_knee_clear_h
         raise ArgumentError, "ADA knee clearance must be less than cabinet top" if knee_clear_z >= cabinet_top_z
 
-        # Full-height sides (floor to cabinet top)
+        # Upper side/end panels stop above the clearance envelope. This preserves
+        # the full nominal cabinet width as clear knee width below the apron.
+        upper_side_z = knee_clear_z
+        upper_side_h = cabinet_top_z - upper_side_z
         add_part_component(ce, model,
-          name: "Side - Left (ADA)",
-          x: 0, y: 0, z: 0.0,
-          lx: thk, ly: d, lz: cabinet_top_z,
+          name: "Finished Upper Side - Left (ADA)",
+          x: 0, y: 0, z: upper_side_z,
+          lx: thk, ly: d, lz: upper_side_h,
           tag: tag_carcass, material: mat_parts,
           edge_band: eb_left,
           edge_material: mat_edge
         )
         add_part_component(ce, model,
-          name: "Side - Right (ADA)",
-          x: (w - thk), y: 0, z: 0.0,
-          lx: thk, ly: d, lz: cabinet_top_z,
+          name: "Finished Upper Side - Right (ADA)",
+          x: (w - thk), y: 0, z: upper_side_z,
+          lx: thk, ly: d, lz: upper_side_h,
           tag: tag_carcass, material: mat_parts,
           edge_band: eb_right,
           edge_material: mat_edge
         )
 
-        # Full top panel (always)
+        # Open top for the lavatory bowl. A continuous 2-inch front support and
+        # rear mounting rail provide the wall-mounted cabinet structure.
+        support_h = in_to_length(2.0)
         add_part_component(ce, model,
-          name: "Top (ADA)",
-          x: thk, y: 0, z: top_z,
-          lx: inner_w, ly: d, lz: thk,
+          name: "Continuous Front Support - 2 inch (ADA)",
+          x: 0, y: (d - thk), z: (cabinet_top_z - support_h),
+          lx: w, ly: thk, lz: support_h,
           tag: tag_carcass, material: mat_parts
         )
-
-
-        # Back panel (ADA): match section view (1/2\" typical). If back_thk is 0, skip.
-        if back_thk > 0.0
-          add_part_component(ce, model,
-            name: "Back (ADA)",
-            x: 0, y: 0, z: 0.0,
-            lx: w, ly: back_thk, lz: cabinet_top_z,
-            tag: tag_carcass, material: mat_parts
-          )
-        end
-
-        # Removable sloped access panel (ADA): slopes from underside of the top panel down to knee-clear height.
-        begin
-          panel_thk = in_to_length(0.5)
-          knee_depth = clamp(ada_knee_depth, 17.0, 25.0)
-          knee_depth = [knee_depth, d].min
-          y_top = d
-          z_top = top_z
-          y_bot = d - knee_depth
-          z_bot = 0.0
-
-          rp = ce.add_group
-          rp.name = "Removable Panel (ADA)"
-          rp.layer = tag_carcass
-
-          pts = [
-            Geom::Point3d.new(thk, y_top, z_top),
-            Geom::Point3d.new(w - thk, y_top, z_top),
-            Geom::Point3d.new(w - thk, y_bot, z_bot),
-            Geom::Point3d.new(thk, y_bot, z_bot)
-          ]
-          face = rp.entities.add_face(pts)
-          if face
-            face.reverse! if face.normal.z < 0
-            face.pushpull(panel_thk)
-            rp.material = mat_parts if mat_parts
-          end
-        rescue
-          # ignore removable panel build errors
-        end
-
-        # (ADA) back + removable panel added above
+        add_part_component(ce, model,
+          name: "Upper Rear Wall Mounting Rail (ADA)",
+          x: 0, y: 0, z: (cabinet_top_z - support_h),
+          lx: w, ly: thk, lz: support_h,
+          tag: tag_carcass, material: mat_parts
+        )
       else
         # ----------------------------
         # Standard carcass construction
@@ -3296,12 +3298,65 @@ end
       end
 
       # ----------------------------
-      # Sink Base + ADA Sink fronts:
-      # - false drawer front 6"
-      # - doors below for Sink Base
-      # - ADA: sloped apron + optional access doors (kept, but many ADA designs omit doors)
+      # ADA removable apron/access panels and standard sink-base fronts.
       # ----------------------------
-      if type == "Sink Base" 
+      if is_ada_sink
+        fronts_grp = root.entities.add_group
+        fronts_grp.name = "ADA Removable Front Assembly"
+        fronts_grp.layer = tag_doors
+        fe = fronts_grp.entities
+
+        support_h = in_to_length(2.0)
+        apron_top_z = cabinet_top_z - support_h
+        apron_bottom_z = apron_top_z - ada_apron_h
+        raise ArgumentError, "ADA apron interferes with 27-inch knee clearance" if apron_bottom_z < ada_knee_clear_h
+
+        apron = add_wedge_component(fe, model,
+          name: "Removable ADA Apron - Beveled Bottom",
+          x: reveal_edge,
+          y: (d - thk),
+          z: apron_bottom_z,
+          lx: (w - 2.0 * reveal_edge),
+          ly: thk,
+          lz: ada_apron_h,
+          slope_depth: [in_to_length(0.375), thk].min,
+          tag: tag_doors,
+          material: mat_fronts
+        )
+        apron.set_attribute("skservices_panel", "removable", true)
+        apron.set_attribute("skservices_panel", "mounting", "A&M concealed removable bracket or approved equal")
+        apron.set_attribute("skservices_panel", "edge_treatment", "finished; beveled bottom edge")
+
+        access_panel_thk = in_to_length(0.5)
+        # Recess the panel face by its thickness so the finished front surface,
+        # not merely the construction line, remains outside the clear envelope.
+        panel_top_y = d - ada_knee_depth_at_27 - access_panel_thk
+        panel_bottom_y = d - ada_knee_depth - access_panel_thk
+        panel_bottom_z = ada_toe_clear_h
+        panel_gap = [reveal_center, in_to_length(0.125)].max
+        panel_total_w = w - (2.0 * reveal_edge) - panel_gap
+        panel_width = panel_total_w / 2.0
+        raise ArgumentError, "ADA access panels have no usable width" if panel_width <= 0.0
+
+        [["Left", reveal_edge], ["Right", reveal_edge + panel_width + panel_gap]].each do |label, panel_x|
+          panel = fe.add_group
+          panel.name = "Removable ADA Access Panel - #{label}"
+          panel.layer = tag_doors
+          points = [
+            Geom::Point3d.new(panel_x, panel_top_y, apron_bottom_z),
+            Geom::Point3d.new(panel_x + panel_width, panel_top_y, apron_bottom_z),
+            Geom::Point3d.new(panel_x + panel_width, panel_bottom_y, panel_bottom_z),
+            Geom::Point3d.new(panel_x, panel_bottom_y, panel_bottom_z)
+          ]
+          face = panel.entities.add_face(points)
+          raise "Failed to create ADA access panel" unless face && face.valid?
+          face.pushpull(access_panel_thk)
+          panel.material = mat_fronts if mat_fronts
+          panel.set_attribute("skservices_panel", "removable", true)
+          panel.set_attribute("skservices_panel", "mounting", "concealed positive mechanical clips")
+          panel.set_attribute("skservices_panel", "edge_treatment", "all exposed edges finished")
+        end
+      elsif type == "Sink Base"
         fronts_grp = root.entities.add_group
         fronts_grp.name = "Sink Fronts"
         fronts_grp.layer = tag_doors
@@ -3326,46 +3381,14 @@ end
             edge_band: [:xp, :xn, :zp, :zn],
             edge_material: mat_edge
         )
-        if type == "ADA Sink"
-          # ADA apron: 3" tall, sloped/recessed; bottom >= 27" AFF
-          apron_h = ada_apron_h
-          apron_bottom_min = ada_knee_clear_h
-          apron_bottom_z = [ff_z - 0.125 - apron_h, apron_bottom_min].max
-          apron_z = apron_bottom_z
-
-          apron_depth = clamp(ada_knee_depth, 17.0, 25.0)
-          apron_depth = [apron_depth, d].min
-
-          add_wedge_component(fe, model,
-            name: "ADA Apron (Sloped)",
-            x: reveal_edge,
-            y: (d - apron_depth),
-            z: apron_z,
-            lx: (w - 2.0 * reveal_edge),
-            ly: apron_depth,
-            lz: apron_h,
-            slope_depth: [3.0, apron_depth].min,
-            tag: tag_doors,
-            material: mat_parts
-          )
-        end
-
-        # Doors below false front:
-        # - Sink Base: standard doors
-        # - ADA: optional; we still generate if enabled, but auto-skip if it conflicts with knee space/apron.
+        # Doors below false front.
         if show_doors
           doors_grp = root.entities.add_group
           doors_grp.name = "Doors"
           doors_grp.layer = tag_doors
           de = doors_grp.entities
 
-          door_span_bottom_z =
-            if type == "ADA Sink"
-              # Keep knee space open: start doors above knee clearance and above apron if present
-              [ada_knee_clear_h, 0.0].max
-            else
-              carcass_z0
-            end
+          door_span_bottom_z = carcass_z0
 
           door_span_top_z = ff_z
           door_h = (door_span_top_z - door_span_bottom_z) - (2.0 * reveal_edge)
@@ -4341,12 +4364,6 @@ tag: tag_doors, material: mat_fronts,
         )
       end
 
-      # Wall-mount ADA Sink base 10" off the floor (raise entire assembly)
-      if is_ada_sink
-        z_off = in_to_length(10.0)
-        root.transform!(Geom::Transformation.translation([0.0, 0.0, z_off]))
-      end
-
 # Compute and persist a catalog model number for every generated cabinet.
 begin
   params[:model_number] = compute_model_number(params)
@@ -4361,6 +4378,19 @@ begin
   end
 rescue
   # do not block generation on model-number issues
+end
+
+if is_ada_sink && root && root.valid?
+  root.set_attribute("skservices_ada", "standard", "ANSI/ADA lavatory clearances")
+  root.set_attribute("skservices_ada", "clear_floor_space", "30 min W x 48 min D; forward approach")
+  root.set_attribute("skservices_ada", "clear_knee_width_in", 30.0)
+  root.set_attribute("skservices_ada", "knee_height_in", params[:ada_knee_clear_h_in].to_f)
+  root.set_attribute("skservices_ada", "knee_depth_at_27_in", (params[:ada_knee_depth_at_27_in] || 8.0).to_f)
+  root.set_attribute("skservices_ada", "toe_height_in", (params[:ada_toe_clear_h_in] || 9.0).to_f)
+  root.set_attribute("skservices_ada", "total_clear_depth_in", params[:ada_knee_depth_in].to_f)
+  root.set_attribute("skservices_ada", "plumbing_protection_required", true)
+  root.set_attribute("skservices_ada", "no_sharp_or_abrasive_surfaces", true)
+  root.set_attribute("skservices_ada", "field_verification_required", true)
 end
 
 orient_cabinet_geometry_for_native_front!(root, w, d, params)

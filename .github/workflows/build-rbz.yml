@@ -26,6 +26,9 @@ jobs:
           ruby -c skilled_services.rb
           find skilled_services scripts -name "*.rb" -print0 | xargs -0 -n1 ruby -c
 
+      - name: Run catalog and ADA default tests
+        run: ruby tests/catalog_test.rb
+
       - name: Build RBZ
         run: ruby scripts/build_rbz.rb
 

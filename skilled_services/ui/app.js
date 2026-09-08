@@ -3,6 +3,17 @@
             const EMBED_DEFAULTS_JSON = {{EMBED_DEFAULTS_JSON}};
             const EMBEDDED_CATALOG_FALLBACK = [{"code":"B12","name":"Base 12","category":"Base","cabinet_type":"Base","default_width":12,"default_height":34.5,"default_depth":24,"minimum_width":9,"maximum_width":21,"width_increment":3,"door_count":1,"drawer_count":1,"shelf_count":1,"toe_kick":4,"construction_type":"Project Default","notes":"Single-door base"},{"code":"B24","name":"Base 24","category":"Base","cabinet_type":"Base","default_width":24,"default_height":34.5,"default_depth":24,"minimum_width":24,"maximum_width":36,"width_increment":3,"door_count":2,"drawer_count":1,"shelf_count":1,"toe_kick":4,"construction_type":"Project Default","notes":"Standard base cabinet"},{"code":"B36","name":"Base 36","category":"Base","cabinet_type":"Base","default_width":36,"default_height":34.5,"default_depth":24,"minimum_width":36,"maximum_width":48,"width_increment":3,"door_count":2,"drawer_count":1,"shelf_count":1,"toe_kick":4,"construction_type":"Project Default","notes":"Wide base cabinet"},{"code":"DB24","name":"Drawer Base 24","category":"Base","cabinet_type":"Base","default_width":24,"default_height":34.5,"default_depth":24,"minimum_width":12,"maximum_width":36,"width_increment":3,"door_count":0,"drawer_count":3,"shelf_count":0,"toe_kick":4,"construction_type":"Project Default","notes":"Three-drawer base"},{"code":"W3018","name":"Wall 30 High x 18 Wide","category":"Wall","cabinet_type":"Wall","default_width":18,"default_height":30,"default_depth":12,"minimum_width":9,"maximum_width":24,"width_increment":3,"door_count":1,"drawer_count":0,"shelf_count":2,"toe_kick":0,"construction_type":"Project Default","notes":"Standard 30-inch-high wall cabinet"},{"code":"W3030","name":"Wall 30 High x 30 Wide","category":"Wall","cabinet_type":"Wall","default_width":30,"default_height":30,"default_depth":12,"minimum_width":24,"maximum_width":36,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":2,"toe_kick":0,"construction_type":"Project Default","notes":"Double-door wall cabinet"},{"code":"W3642","name":"Wall 36 High x 42 Wide","category":"Wall","cabinet_type":"Wall","default_width":42,"default_height":36,"default_depth":12,"minimum_width":36,"maximum_width":48,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":3,"toe_kick":0,"construction_type":"Project Default","notes":"Wide wall cabinet"},{"code":"T2484","name":"Tall Utility 24 x 84","category":"Tall","cabinet_type":"Tall","default_width":24,"default_height":84,"default_depth":24,"minimum_width":18,"maximum_width":36,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":5,"toe_kick":4,"construction_type":"Project Default","notes":"Full-height utility cabinet"},{"code":"P2484","name":"Tall Pantry","category":"Pantry","cabinet_type":"Tall","default_width":24,"default_height":84,"default_depth":24,"minimum_width":18,"maximum_width":36,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":5,"toe_kick":4,"construction_type":"Project Default","notes":"Standard pantry"},{"code":"SB30","name":"Sink Base 30","category":"Sink","cabinet_type":"Sink Base","default_width":30,"default_height":34.5,"default_depth":24,"minimum_width":24,"maximum_width":48,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":0,"toe_kick":4,"construction_type":"Project Default","notes":"False-front sink base"},{"code":"ADA30","name":"ADA Sink 30","category":"Sink","cabinet_type":"ADA Sink","default_width":30,"default_height":34.5,"default_depth":21,"minimum_width":30,"maximum_width":48,"width_increment":3,"door_count":0,"drawer_count":0,"shelf_count":0,"toe_kick":0,"construction_type":"Project Default","notes":"Accessible knee-space sink base"},{"code":"V24","name":"Vanity 24","category":"Vanity","cabinet_type":"Base","default_width":24,"default_height":34.5,"default_depth":21,"minimum_width":18,"maximum_width":48,"width_increment":3,"door_count":2,"drawer_count":0,"shelf_count":1,"toe_kick":4,"construction_type":"Project Default","notes":"Standard vanity base"},{"code":"BCB36","name":"Pie-Cut Corner Base","category":"Corner","cabinet_type":"Pie-Cut Corner Base","default_width":36,"default_height":34.5,"default_depth":36,"minimum_width":36,"maximum_width":36,"width_increment":1,"door_count":1,"drawer_count":0,"shelf_count":1,"toe_kick":4,"construction_type":"Project Default","notes":"36 x 36 pie-cut corner"},{"code":"BDC36","name":"Diagonal Corner Base","category":"Corner","cabinet_type":"Diagonal Corner Base","default_width":36,"default_height":34.5,"default_depth":36,"minimum_width":36,"maximum_width":36,"width_increment":1,"door_count":1,"drawer_count":0,"shelf_count":1,"toe_kick":4,"construction_type":"Project Default","notes":"Diagonal-front corner"},{"code":"BBC42","name":"Blind Corner Base","category":"Corner","cabinet_type":"Blind Corner Base","default_width":42,"default_height":34.5,"default_depth":24,"minimum_width":39,"maximum_width":48,"width_increment":3,"door_count":1,"drawer_count":0,"shelf_count":1,"toe_kick":4,"construction_type":"Project Default","notes":"Blind corner base"},{"code":"TC15","name":"Trash Pull-Out 15","category":"Accessories","cabinet_type":"Trash Can","default_width":15,"default_height":34.5,"default_depth":24,"minimum_width":15,"maximum_width":24,"width_increment":3,"door_count":0,"drawer_count":1,"shelf_count":0,"toe_kick":4,"construction_type":"Project Default","notes":"Full-height pull-out front"},{"code":"CUB24","name":"Cubbies 24","category":"Accessories","cabinet_type":"Cubbies","default_width":24,"default_height":48,"default_depth":24,"minimum_width":12,"maximum_width":48,"width_increment":3,"door_count":0,"drawer_count":0,"shelf_count":3,"toe_kick":4,"construction_type":"Project Default","notes":"Open cubby storage"}];
 
+            const adaFallback = EMBEDDED_CATALOG_FALLBACK.find(item => item.code === "ADA30");
+            if (adaFallback) Object.assign(adaFallback, {
+              name: "ADA Wall-Mounted Lavatory Cabinet",
+              default_width: 36,
+              default_height: 34,
+              default_depth: 24,
+              minimum_width: 30,
+              back_thk_in: 0,
+              notes: "Open knee space with removable beveled apron and removable access panels"
+            });
+
             let EDIT_TARGET_PID = null;
             let CATALOG = [];
             let CATALOG_MODE = "all";
@@ -154,7 +165,7 @@
               "Wall": [30, 36, 42],
               "Tall": [84, 90, 96],
               "Sink Base": [34.5],
-              "ADA Sink": [34.5],
+              "ADA Sink": [34],
               "Cubbies": [24, 30, 36, 42, 48, 60, 72, 84, 90]
             };
 
@@ -250,6 +261,10 @@
                 topMode.value = "Full Top";
                 topMode.disabled = true;
                 stretcher.disabled = true;
+              } else if (type === "ADA Sink") {
+                topMode.value = "Open Top";
+                topMode.disabled = true;
+                stretcher.disabled = true;
               } else {
                 topMode.disabled = false;
                 stretcher.disabled = (topMode.value !== "Stretchers");
@@ -305,6 +320,16 @@
                 if ((parseFloat($("toe_height_in").value) || 0) <= 0) $("toe_height_in").value = 4.0;
                 if ((parseFloat($("toe_recess_in").value) || 0) <= 0) $("toe_recess_in").value = 3.0;
                 updateCubbiesAuto();
+              } else if (isADA) {
+                $("show_doors").checked = false;
+                $("show_doors").disabled = true;
+                $("hinge_side").disabled = true;
+                $("door_swing").disabled = true;
+                $("drawer_count").value = "0";
+                $("partition_count").value = "0";
+                $("shelf_count").value = "0";
+                $("partition_count").disabled = true;
+                $("shelf_count").disabled = true;
               } else {
                 $("show_doors").disabled = false;
                 $("hinge_side").disabled = false;
@@ -324,11 +349,13 @@
                 $("use_slides").checked = true;
               }
 
-              ["false_front_height_in","countertop_thk_in","ada_knee_clear_h_in","ada_apron_h_in","ada_knee_depth_in","ada_side_leg_depth_in"]
+              ["false_front_height_in","countertop_thk_in","ada_knee_clear_h_in","ada_apron_h_in","ada_knee_depth_in","ada_side_leg_depth_in","ada_knee_depth_at_27_in","ada_toe_clear_h_in","ada_toe_additional_depth_in"]
                 .forEach(id => $(id).disabled = !isSink);
 
               // Toe-kick controls: only allowed for certain cabinet types.
               // This is strictly a UI/preview rule; Ruby-side geometry enforces the same.
+              $("false_front_height_in").disabled = !isSink || isADA;
+
               const toeAllowed = typeAllowsToeKick(type);
               $("toe_height_in").disabled = !toeAllowed;
               $("toe_recess_in").disabled = !toeAllowed;
@@ -624,7 +651,7 @@ function updateCubbiesAuto(){
                 "Wall": "Wall Cabinet",
                 "Tall": "Tall Cabinet",
                 "Sink Base": "Sink Base Cabinet",
-                "ADA Sink": "ADA Sink Cabinet",
+                "ADA Sink": "ADA Wall-Mounted Lavatory Cabinet",
                 "Trash Can": "Trash Pull-Out Cabinet",
                 "Cubbies": "Cubby Cabinet",
                 "Appliance End Panel": "Appliance End Panel",
@@ -743,9 +770,20 @@ if (type === "Base" && dc >= 2) {
 
               if (isADA) {
                 const kneeH = parseFloat($("ada_knee_clear_h_in").value) || 27;
-                if (kneeH < 27) warnings.push("ADA: knee clearance height is typically 27\\\" minimum.");
+                if (W < 30) issues.push("ADA clear knee-space width requires a cabinet at least 30\\\" wide.");
+                if (H > 34) issues.push("ADA lavatory height must not exceed 34\\\" AFF.");
+                if (kneeH < 27) issues.push("ADA knee clearance height must be at least 27\\\".");
                 const kneeD = parseFloat($("ada_knee_depth_in").value) || 20;
                 if (kneeD < 17 || kneeD > 25) issues.push("ADA knee depth must be 17–25\\\".");
+                const kneeD27 = parseFloat($("ada_knee_depth_at_27_in").value) || 8;
+                if (kneeD27 < 8) issues.push("ADA knee depth at 27\\\" AFF must be at least 8\\\".");
+                const toeHClear = parseFloat($("ada_toe_clear_h_in").value) || 9;
+                if (toeHClear < 9) issues.push("ADA toe clearance height must be at least 9\\\".");
+                const toeAdditional = parseFloat($("ada_toe_additional_depth_in").value) || 11;
+                if (toeAdditional < 11) issues.push("ADA additional toe depth must be at least 11\\\".");
+                if (kneeD < kneeD27 + toeAdditional) issues.push("ADA total clear depth must include the knee depth plus 11\\\" additional toe depth.");
+                const obstruction = parseFloat($("ada_side_leg_depth_in").value) || 6;
+                if (obstruction > 6) issues.push("ADA front obstruction must not exceed 6\\\".");
               }
 
               return { issues, warnings };
@@ -944,7 +982,7 @@ function drawPartDims(ctx, x, y, wpx, hpx, wIn, hIn){
 
               const toeAllowed = typeAllowsToeKick(type);
 
-              const ct = 0;
+              const ct = isADA ? (parseFloat($("countertop_thk_in").value) || 2) : 0;
               const toeH = toeAllowed ? (parseFloat($("toe_height_in").value) || 0) : 0;
 
               // Cabinet top below countertop
@@ -1057,8 +1095,8 @@ function drawPartDims(ctx, x, y, wpx, hpx, wIn, hIn){
                 return;
               }
 
-              // Sink false front
-              if (isSink) {
+              // Standard sink-base false front (ADA uses a removable apron).
+              if (type === "Sink Base") {
                 const ffH = parseFloat($("false_front_height_in").value) || 6;
                 const ffTop = oy + (H - cabinetTop) * scale; // cabinet top y
                 const ffY = ffTop + (revealEdge*scale);
@@ -1101,30 +1139,34 @@ function drawPartDims(ctx, x, y, wpx, hpx, wIn, hIn){
                      }
                    }
                  }
+              }
 
+              // ADA removable apron, symmetrical access panels, and clear zone.
+              if (isADA) {
+                const kneeH = parseFloat($("ada_knee_clear_h_in").value) || 27;
+                const apronH = parseFloat($("ada_apron_h_in").value) || 3;
+                const apronTop = cabinetTop - 2;
+                const apronY = oy + (H - apronTop) * scale;
+                const apronHpx = apronH * scale;
+                ctx.strokeStyle = "rgb(90,90,90)";
+                drawLineRect(ctx, fx, apronY, fw, apronHpx);
 
-                // ADA apron + knee space
-                if (isADA) {
-                  const kneeH = parseFloat($("ada_knee_clear_h_in").value) || 27;
-                  const apronH = parseFloat($("ada_apron_h_in").value) || 3;
-                  const apronBottom = Math.max(kneeH, 0);
-                  const apronTop = (cabinetTop - revealEdge) - ffH - 0.125;
-                  const apronY = oy + (H - apronTop) * scale;
-                  const apronHpx = apronH * scale;
-                  ctx.strokeStyle = "rgb(90,90,90)";
-                  ctx.setLineDash([6, 3]);
-                  drawLineRect(ctx, fx, apronY, fw, apronHpx);
-                  ctx.setLineDash([]);
+                const panelTopY = apronY + apronHpx;
+                const toeHClear = parseFloat($("ada_toe_clear_h_in").value) || 9;
+                const panelBottomY = oy + (H - toeHClear) * scale;
+                const gapPx = Math.max(revealCenter, 0.125) * scale;
+                const eachPanelW = (fw - gapPx) / 2;
+                ctx.setLineDash([6, 3]);
+                drawLineRect(ctx, fx, panelTopY, eachPanelW, panelBottomY - panelTopY);
+                drawLineRect(ctx, fx + eachPanelW + gapPx, panelTopY, eachPanelW, panelBottomY - panelTopY);
+                ctx.setLineDash([]);
 
-                  // Knee clearance zone
-                  const kneeY = oy + (H - kneeH) * scale;
-                  ctx.fillStyle = "rgba(0,0,0,0.04)";
-                  ctx.fillRect(ox, kneeY, W*scale, (H*scale - kneeY - 1));
-
-                  ctx.fillStyle = "rgb(60,60,60)";
-                  ctx.font = "11px Arial";
-                  ctx.fillText("Knee clearance", ox + 8, kneeY + 14);
-                }
+                const kneeY = oy + (H - kneeH) * scale;
+                ctx.fillStyle = "rgba(0,0,0,0.04)";
+                ctx.fillRect(ox, kneeY, W*scale, (H*scale - kneeY - 1));
+                ctx.fillStyle = "rgb(60,60,60)";
+                ctx.font = "11px Arial";
+                ctx.fillText("ADA knee/toe clearance", ox + 8, kneeY + 14);
               }
 
               // Drawers (Base)
@@ -1368,11 +1410,11 @@ function gather(){
 
               const defaultH =
                 (t === "Wall") ? 30.0 :
-                (t === "Tall") ? 84.0 : 34.5;
+                (t === "Tall") ? 84.0 :
+                (t === "ADA Sink") ? 34.0 : 34.5;
 
               const defaultD =
-                (t === "Wall") ? 12.0 :
-                (t === "ADA Sink") ? 21.0 : 24.0;
+                (t === "Wall") ? 12.0 : 24.0;
 
               return {
                 catalog_code: $("catalog_code") ? $("catalog_code").value : "",
@@ -1443,6 +1485,9 @@ function gather(){
                 ada_apron_h_in: num("ada_apron_h_in", 3.0),
                 ada_knee_depth_in: num("ada_knee_depth_in", 20.0),
                 ada_side_leg_depth_in: num("ada_side_leg_depth_in", 6.0),
+                ada_knee_depth_at_27_in: num("ada_knee_depth_at_27_in", 8.0),
+                ada_toe_clear_h_in: num("ada_toe_clear_h_in", 9.0),
+                ada_toe_additional_depth_in: num("ada_toe_additional_depth_in", 11.0),
                 // Materials/tags omitted (UI section removed)
                 edit_target_pid: EDIT_TARGET_PID
               };
@@ -1573,7 +1618,7 @@ function gather(){
                 "drawer_count","use_slides","drawer_front_height_in","drawer_front_heights_in","drawer_gap_in",
                 "show_doors","door_swing","hinge_side","open_angle_deg",
                 "reveal_edge_in","reveal_center_in","partition_count",
-                "false_front_height_in","countertop_thk_in","ada_knee_clear_h_in","ada_apron_h_in","ada_knee_depth_in","ada_side_leg_depth_in"
+                "false_front_height_in","countertop_thk_in","ada_knee_clear_h_in","ada_apron_h_in","ada_knee_depth_in","ada_side_leg_depth_in","ada_knee_depth_at_27_in","ada_toe_clear_h_in","ada_toe_additional_depth_in"
               ].forEach(id => {
                 const el = $(id);
                 if (!el) return;
@@ -1672,6 +1717,9 @@ function gather(){
               $("ada_apron_h_in").value = d.ada_apron_h_in;
               $("ada_knee_depth_in").value = d.ada_knee_depth_in;
               $("ada_side_leg_depth_in").value = d.ada_side_leg_depth_in;
+              $("ada_knee_depth_at_27_in").value = d.ada_knee_depth_at_27_in ?? 8;
+              $("ada_toe_clear_h_in").value = d.ada_toe_clear_h_in ?? 9;
+              $("ada_toe_additional_depth_in").value = d.ada_toe_additional_depth_in ?? 11;
 
               const re = parseFloat($("reveal_edge_in").value);
               if (Number.isFinite(re) && re > 0) lastRevealEdge = re;

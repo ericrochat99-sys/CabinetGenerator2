@@ -19,12 +19,12 @@
   },
   {
     "code": "ADA30",
-    "name": "ADA Sink 30",
+    "name": "ADA Wall-Mounted Lavatory Cabinet",
     "category": "Sink",
     "cabinet_type": "ADA Sink",
-    "default_width": 30,
-    "default_height": 34.5,
-    "default_depth": 21,
+    "default_width": 36,
+    "default_height": 34,
+    "default_depth": 24,
     "minimum_width": 30,
     "maximum_width": 48,
     "width_increment": 3,
@@ -33,6 +33,6 @@
     "shelf_count": 0,
     "toe_kick": 0,
     "construction_type": "Project Default",
-    "notes": "Accessible knee-space sink base"
+    "notes": "Wall-mounted lavatory cabinet with open knee space, removable beveled apron, removable access panels, and no floor, shelves, partitions, or fixed back"
   }
 ]
