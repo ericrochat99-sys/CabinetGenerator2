@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.6] - 2026-09-08
+
+- Removed the oversized exposed 21-by-21-inch countertop brackets from the ADA lavatory cabinet.
+- Rebuilt the sloped removable access panels as clean, closed solids with thickness toward the cabinet rear so their finished faces remain on the ADA clearance envelope.
+- Disabled standard pulls, hinges, bumpers, shelf pins, cam locks, and countertop-bracket geometry for the ADA cabinet while retaining concealed removable-hardware metadata.
+
 ## [2.1.5] - 2026-09-08
 
 - Rebuilt the ADA Sink as a wall-mounted lavatory cabinet with a 34-inch maximum height and a 36-by-24-inch default size.
