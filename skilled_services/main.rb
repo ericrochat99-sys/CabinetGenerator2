@@ -4412,11 +4412,19 @@ write_cabinet_attributes(root, params)
 
       @dialog.add_action_callback("load_model") do |_ctx, code|
         item = SkilledServices::Catalog::Loader.find(code)
-        next unless item
-        params = merged_params_for_type(item["cabinet_type"])
-        params.merge!(SkilledServices::Catalog::Loader.placement_params(code))
-        Sketchup.write_default(PREF_KEY, "last_catalog_code", item["code"])
-        @dialog.execute_script("set_form(#{params.to_json}); set_catalog_selection(#{item["code"].to_json});")
+        placement = SkilledServices::Catalog::Loader.placement_params(code)
+        next unless placement
+        params = merged_params_for_type(placement[:cabinet_type])
+        params.merge!(placement)
+        selected_code = item ? item["code"] : code.to_s.strip
+        Sketchup.write_default(PREF_KEY, "last_catalog_code", selected_code)
+        selection = item || {
+          "code" => selected_code,
+          "name" => "Custom item number",
+          "category" => placement[:cabinet_type],
+          "notes" => "Loaded all parameters from #{selected_code}."
+        }
+        @dialog.execute_script("set_form(#{params.to_json}); set_catalog_selection(#{selected_code.to_json}, #{selection.to_json});")
       end
 
       @dialog.add_action_callback("load_type") do |_ctx, type|

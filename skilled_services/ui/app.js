@@ -6,6 +6,7 @@
             let EDIT_TARGET_PID = null;
             let CATALOG = [];
             let CATALOG_MODE = "all";
+            let CATALOG_LOOKUP_TIMER = null;
 
             function storedList(key){
               try { return JSON.parse(localStorage.getItem(key) || "[]"); } catch(_e) { return []; }
@@ -17,7 +18,9 @@
               const favorites = storedList("cabinet_favorites");
               const recent = storedList("cabinet_recent");
               return CATALOG.filter(item => {
-                if (category && item.category !== category) return false;
+                // A typed item number is a global lookup. Do not let the
+                // previously selected category hide a valid result.
+                if (!query && category && item.category !== category) return false;
                 if (query && !`${item.code} ${item.name} ${item.notes}`.toLowerCase().includes(query)) return false;
                 if (CATALOG_MODE === "favorites" && !favorites.includes(item.code)) return false;
                 if (CATALOG_MODE === "recent" && !recent.includes(item.code)) return false;
@@ -53,23 +56,46 @@
 
             function chooseCatalogModel(code, requestDefaults = true){
               const item = CATALOG.find(candidate => candidate.code === code);
-              if (!item) return;
-              $("catalog_code").value = item.code;
-              const recent = storedList("cabinet_recent").filter(value => value !== item.code);
-              recent.unshift(item.code);
+              const selectedCode = item ? item.code : (code || "").trim();
+              if (!selectedCode) return;
+              if (item) $("catalog_code").value = item.code;
+              const recent = storedList("cabinet_recent").filter(value => value !== selectedCode);
+              recent.unshift(selectedCode);
               try { localStorage.setItem("cabinet_recent", JSON.stringify(recent.slice(0, 10))); } catch(_e) {}
               updateCatalogDetails();
-              if (requestDefaults && window.sketchup && sketchup.load_model) sketchup.load_model(item.code);
+              if (requestDefaults && window.sketchup && sketchup.load_model) sketchup.load_model(selectedCode);
             }
 
-            function set_catalog_selection(code){
-              const item = CATALOG.find(candidate => candidate.code === code);
+            function set_catalog_selection(code, resolvedItem){
+              let item = CATALOG.find(candidate => candidate.code === code);
+              if (!item && resolvedItem) {
+                item = resolvedItem;
+                CATALOG = CATALOG.filter(candidate => candidate.code !== code).concat(item);
+              }
               if (!item) return;
+              if (![...$("catalog_category").options].some(option => option.value === item.category)) {
+                const option = document.createElement("option"); option.value = item.category; option.textContent = item.category;
+                $("catalog_category").appendChild(option);
+              }
+              $("catalog_search").value = "";
               $("catalog_category").value = item.category;
               renderCatalog(code);
               $("catalog_model").value = code;
-              $("catalog_code").value = code;
               updateCatalogDetails();
+            }
+
+            function typedItemNumber(){
+              const value = ($("catalog_search")?.value || "").trim();
+              return /^[A-Z][A-Z0-9]*P?[\u2013\u2014\-_]\d+(?:\.\d+)?\/\d+(?:\.\d+)?\/\d+(?:\.\d+)?$/i.test(value) ? value : "";
+            }
+
+            function loadTypedItemNumber(){
+              const typed = ($("catalog_search")?.value || "").trim();
+              const catalogItem = CATALOG.find(item => item.code.toLowerCase() === typed.toLowerCase());
+              const code = catalogItem ? catalogItem.code : typedItemNumber();
+              if (!code) return false;
+              chooseCatalogModel(code, true);
+              return true;
             }
 
             function initialize_catalog(items, lastCode){
@@ -1449,9 +1475,20 @@ function gather(){
                 }
               });
 
-              $("catalog_search").addEventListener("input", () => renderCatalog($("catalog_code").value));
+              $("catalog_search").addEventListener("input", () => {
+                renderCatalog($("catalog_code").value);
+                window.clearTimeout(CATALOG_LOOKUP_TIMER);
+                CATALOG_LOOKUP_TIMER = window.setTimeout(loadTypedItemNumber, 250);
+              });
+              $("catalog_search").addEventListener("keydown", event => {
+                if (event.key === "Enter" && loadTypedItemNumber()) event.preventDefault();
+              });
+              $("catalog_search").addEventListener("change", () => { loadTypedItemNumber(); });
               $("catalog_category").addEventListener("change", () => renderCatalog());
               $("catalog_model").addEventListener("change", event => chooseCatalogModel(event.target.value, true));
+              // Clicking the already-highlighted option does not emit change in
+              // Chromium. Treat an intentional click as a selection too.
+              $("catalog_model").addEventListener("click", event => chooseCatalogModel(event.target.value, true));
               $("toggle_favorite").addEventListener("click", () => {
                 const code = $("catalog_model").value; if (!code) return;
                 let values = storedList("cabinet_favorites");
@@ -1662,6 +1699,11 @@ function gather(){
               setOverlayMode($("overlay_mode").value);
               enforceMaxWidth();
               updateDoorCount();
+              // Catalog families may specify a door count that intentionally
+              // differs from the generic width-based split rule.
+              if (d.door_count !== null && d.door_count !== undefined) {
+                $("door_count").value = d.door_count.toString();
+              }
               applyTopModeRulesForType($("cabinet_type").value);
               applyTypeRules();
               autoName();
